@@ -38,6 +38,8 @@ pret_optim.m | performs constrained optimization to fit model parameters to a si
 pret_plot_boots.m | plots the results of performing the bootstrapping procedure
 pret_plot_model.m | plots a model or the results of the estimation procedure
 pret_preprocess.m | performs simple preprocessing of data and/or organizes it into an "sj" structure
+pret_sample_data.mat | sample data used in pret_sample_script.m
+pret_sample_script.m | a sample script demonstrating the use of PRET with sample data
 pupilrf.m | creates a pupil response function with the input parameters[2]
 
 ## Workflow ##
@@ -46,8 +48,11 @@ Starting with data that has already been epoched and organized into separate tri
 2. Build models to test by creating "model" structures with pret_model.m and filling them out
 3. Estimate parameters for each model on data in "sj" structure with pret_estimate_sj.m
 4. Perform bootstrapping procedure on data in "sj" for the best model or all models using pret_bootstrap_sj.m
+
 If you have multiple subjects (datasets), you can create multiple "sj" structures and use pret_batch_process.m to perform
 the estimation and bootstrapping procedures for multiple models in one run.
+
+See pret_sample_script.m for a simple demonstration of this workflow.
 
 ## Considerations ##
 * The estimation procedure may take a signficant amount of time, depending on the number of datasets being fit
