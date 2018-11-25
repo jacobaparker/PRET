@@ -172,5 +172,5 @@ boots.tmax95CI = [prctile(boots.tmaxvals,2.5) ; prctile(boots.tmaxvals,97.5)];
 boots.yint95CI = [prctile(boots.yintvals,2.5) ; prctile(boots.yintvals,97.5)];
 
 if bootplotflag
-    pret_plot_boots(boots,model)
+    pret_plot_boots(boots,model);
 end

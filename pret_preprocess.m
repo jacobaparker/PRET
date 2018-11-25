@@ -22,7 +22,9 @@ function sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline,op
 %       times (in ms) of the region to be used to baseline normalize each
 %       trial (can be empty if normalization turned off).
 % 
-%       options = 
+%       options = options structure for pret_preprocess. Default options can be
+%       returned by calling this function with no arguments, or see
+%       pret_default_options.
 %
 %   Output
 %
@@ -45,7 +47,7 @@ function sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline,op
 %
 %       normflag: (true/false) = baseline normalize epoched trials?
 %       [(x-baseline)/baseline], where x is the trial and baseline is the
-%       average pupil size value over the baseline region provided.
+%       average pupil size value over the baseline region indicated.
 % 
 %       blinkflag: (true/false) = perform blink interpolation of each trial?
 %       Uses a cubic spline interpolation algorithm described by Mathôt
@@ -97,20 +99,6 @@ end
 if length(condlabels) ~= length(data)
     error('Number of trial matrices in "data" does not match number of labels in "condlabels"')
 end
-
-% for arg = 1:length(varargin)
-%     switch varargin{arg}
-%         case 'nonormalize'
-%             normflag = false;
-%         case 'noblinkinterp'
-%             blinkflag = false;
-%         case 'blinkinterpargs'
-%             th1 = varargin{arg+1}(1);
-%             th2 = varargin{arg+1}(2);
-%             bwindow = varargin{arg+1}(3);
-%             betblink = varargin{arg+1}(4);
-%     end
-% end
 
 %preallocate output structure sj
 sj = struct('samplerate',samplerate,'trialwindow',trialwindow,'conditions',{condlabels});
