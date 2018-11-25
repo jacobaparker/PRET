@@ -7,9 +7,6 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 % that best matches the time series input as "data". Performs a single
 % optimization using the parameter values in "model" as the starting point.
 % 
-% *NOTE: pret_estimate is highly recommendeded over this program for
-% parameter esimtation (pret_estimate performs multiple iterations of
-% pret_optim from different starting points)*
 % 
 %   Inputs:
 %   
