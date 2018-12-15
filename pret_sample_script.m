@@ -1,7 +1,8 @@
 % pret_sample_script
 % 
 % A script demonstrating a sample workflow with PRET using a sample dataset
-% and model.
+% and model. Can also be used to quickly test if PRET is working (will test
+% most things).
 
 %% load sample data
 % 

@@ -35,7 +35,7 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 %           eventtimes = a copy of eventtimes from "model".
 %           boxtimes = a copy of boxtimes from "model".
 %           samplerate = a copy of samplerate from "model".
-%           window a copy of window from "model".
+%           window = a copy of window from "model".
 %           ampvals = the event amplitude values fit by fmincon.
 %           boxampvals = the box regressor amplitude values fit.
 %           latvals = the event latency values fit.
@@ -44,7 +44,7 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 %           cost = the sum of square errors between the optimized
 %           parameters and the actual data.
 %           R2 = the R^2 goodness of fit value.
-%       *Note - can be input into pret_plot_model, pret_calc, or pret_cost in the 
+%       *Note - can be input into pret_plot_model and pret_calc in the 
 %       place of the "model" input*
 % 
 %   Options

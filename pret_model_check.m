@@ -6,11 +6,6 @@ function pret_model_check(model)
 % valid, will throw an error. Otherwise, if a model is valid, no error will
 % be thrown.
 
-if ~isfield(model,'ampflag')
-    warning('Input "model" does not appear to be a model structure, assuming it is an optim/estim structure')
-    return
-end
-
 %% window
 if length(model.window) ~= 2
     error('model.window must be a two element vector')
