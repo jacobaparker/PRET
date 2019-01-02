@@ -1,10 +1,11 @@
 function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model,options)
 % pret_estimate
-% optim = pret_estimate(data,samplerate,trialwindow,model)
-% optim = pret_estimate(data,samplerate,trialwindow,model,options)
+% [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model)
+% [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model,options)
+% options = pret_estimate()
 % 
 % Optimization algorithm for estimating the model parameters that result in
-% the best fit with the data. First, the cost function is evaluated for a
+% the best fit to the data. First, the cost function is evaluated for a
 % large number (default 2000) of points sampled from across 
 % parameter space. Then, the subset (default 40) that evaluate to the lowest value
 % of the cost function are used as starting points for fmincon. The output
@@ -23,8 +24,8 @@ function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model
 % 
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval do not need to be provided (unless
-%       any of those parameters are not being estimated).
+%       model.tmaxval, and model.yintval do not need to be provided if they
+%       are being estimated but should be provided if they are not being estimated.
 % 
 %       options = options structure for pret_estimate. Default options can be
 %       returned by calling this function with no arguments, or see
@@ -45,7 +46,8 @@ function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model
 %           yintval = the estimated y-intercept value.
 %           cost = the sum of square errors between the optimized
 %           parameters and the actual data.
-%           R2 = the R^2 goodness of fit value.
+%           R2 = the R^2 goodness of fit value
+%           BIC %%%%% RD: add?
 %       *Note - can be input into pret_plot_model, pret_calc, or pret_cost in the 
 %       place of the "model" input*
 % 
@@ -93,7 +95,7 @@ end
 %return output optimization parameters from each starting point?
 pret_generate_params_options = options.pret_generate_params;
 pret_optim_options = options.pret_optim;
-pret_cost_options = options.pret_cost;
+pret_cost_options = options.pret_cost; %%%% RD: "the scope of this variable spans multiple functions" bc it is used in search_param_space without being passed in
 searchnum = options.searchnum;
 optimnum = options.optimnum;
 parammode = options.parammode;
@@ -134,15 +136,16 @@ params = pret_generate_params(searchnum,parammode,model,pret_generate_params_opt
 %structure to store temporary param values
 modelstate = model;
 modelstate.search = struct('ampvals',params.ampvals,'latvals',params.latvals,'tmaxval',params.tmaxvals,'yintval',params.yintvals,'boxampvals',params.boxampvals);
+%%% RD: any reason not to do modelstate.search = params?
 
 %crop data to match model.window
 datalb = find(model.window(1) == time);
 dataub = find(model.window(2) == time);
 data = data(datalb:dataub);
 
-%evaluate cost function with parameter sets spread out across the parameter
-%space to determine which points to perform (time consuming and 
-%computationally intensive) constrained optimization on
+%evaluate cost function with parameter sets distributed across the parameter
+%space to determine which starting points to use for constrained
+%optimization, which is time consuming and computationally intensive 
 fprintf('\nDetermining best %d out of %d starting points for optimization algorithm\n',optimnum,searchnum)
 modelstate = search_param_space(data,searchnum,optimnum,modelstate);
 fprintf('Best %d starting points found\n',optimnum)

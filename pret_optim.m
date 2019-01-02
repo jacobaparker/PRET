@@ -2,14 +2,15 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 % pret_optim
 % optim = pret_optim(data,samplerate,trialwindow,model)
 % optim = pret_optim(data,samplerate,trialwindow,model,options)
+% options = pret_optim()
 % 
 % Constrained optimization to find the model parameters for a given model
 % that best matches the time series input as "data". Performs a single
 % optimization using the parameter values in "model" as the starting point.
 % 
-% *NOTE: pret_estimate is highly recommendeded over this program for
-% parameter esimtation (pret_estimate performs multiple iterations of
-% pret_optim from different starting points)*
+% *NOTE: It is recommended to use pret_estimate, which performs an initial
+% coarse search and then selects the best starting points for optimization
+% with pret_optim.*
 % 
 %   Inputs:
 %   
@@ -52,12 +53,12 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 %       optim_plot_flag (true/false) = plot optimization in realtime? Set
 %       to false if you want speed.
 % 
-%       pret_cost_options = options structure for pret_cost, which pret_optim uses
+%       pret_cost = options structure for pret_cost, which pret_optim uses
 %       as the cost function for fmincon.
 % 
 %       ampfact (1/10) = scaling factor for the event amplitude parameters. 
 %       Parameters should be scaled so that their ranges are of similar magnitude.
-%       This optimizes the performance of fmincon.
+%       This improves the performance of fmincon.
 % 
 %       boxampfact (1/10) = scaling factor for the box amplitude parameters.
 % 

@@ -13,8 +13,8 @@ function sj = pret_estimate_sj(sj,model,options)
 % 
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval do NOT need to be provided (unless
-%       any of those parameters are not being estimated).
+%       model.tmaxval, and model.yintval do not need to be provided if they
+%       are being estimated but should be provided if they are not being estimated.
 %           *NOTE - if you want to fit multiple models, you can input an
 %           Nx1 structure with the same fields as "model", where N is the
 %           number of models and each element is a separate model
@@ -33,7 +33,7 @@ function sj = pret_estimate_sj(sj,model,options)
 %           the number of models in the "model" input. Each element in
 %           these structures is an optim structure output by pret_estimate
 %           fitting that condition with a single model. For more
-%           information about this structure, see pe_estimate.
+%           information about this structure, see pret_estimate.
 %
 %   Options
 %
@@ -54,7 +54,7 @@ if nargin < 3
 end
 
 %OPTIONS
-pret_estimate_options = options.pret_estimate;
+pret_estimate_options = options.pret_estimate; 
 
 %check model
 for mm = 1:length(model)
@@ -71,7 +71,9 @@ sj.estim = [];
 for mm = 1:length(model)
     fprintf('\nModel %d\n',mm)
     for cc = 1:length(sj.conditions)
-        fprintf('Condition %s\n',sj.conditions{cc})
-        sj.estim.(sj.conditions{cc})(mm) = pret_estimate(sj.means.(sj.conditions{cc}),sj.samplerate,sj.trialwindow,model(mm),pret_estimate_options);
+        cond = sj.conditions{cc};
+        fprintf('Condition %s\n',cond)
+        sj.estim.(cond)(mm) = pret_estimate(sj.means.(cond), ...
+            sj.samplerate, sj.trialwindow, model(mm), pret_estimate_options);
     end
 end

@@ -50,7 +50,6 @@ options.pret_generate_params.latfact = 1/1000;
 options.pret_generate_params.tmaxfact = 1/1000;
 options.pret_generate_params.yintfact = 10;
 
-
 %% pret_estimate
 options.pret_estimate.searchnum = 2000;
 options.pret_estimate.optimnum = 40;

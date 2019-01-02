@@ -1,6 +1,7 @@
 function output = blinkinterp(trial,samplerate,th1,th2,bwindow,betblink)
 %Based on method described in Mathôt 2013
 %https://www.researchgate.net/publication/236268543_A_simple_way_to_reconstruct_pupil_size_during_eye_blinks
+%%%%% RD: Add full Mathôt citation %%%%%%
 %
 %blinkinterp detects blink regions in a pupil size timeseries, removes the
 %regions, then interpolates through those regions using the surrounding
@@ -9,21 +10,20 @@ function output = blinkinterp(trial,samplerate,th1,th2,bwindow,betblink)
 %This code only works if blinks are recorded as zeros preceded by a sharp
 %drop in pupil size values and followed by a sharp rise in pupil size.
 % 
-% *DEVELOPED/OPTIMIZED FOR DATA WITH A SAMPLING RATE OF 1kHz*
+% *DEVELOPED/OPTIMIZED FOR DATA COLLECTED WITH EYELINK WITH A SAMPLING 
+%  RATE OF 1kHz*
 %
 %Blinks are detected by first finding the beginning and end location of
-%each region of zeros in the trial. The code determines if the distance
-%between each zero region is sufficient and cuts out areas that are too
-%small. Determined zero regions are filled in with zeros. The code then
+%each region of zeros in the trial. Zero regions that are sufficiently 
+%close together are combined, making them a single blink. The code then
 %looks bwindow datapoints away from the beginning/end of each zero region
 %to find blink onset/blink offset. To determine onset/offset, the original
 %time series is smoothed by convolving with a 11 ms Hanning window, and
 %then a velocity profile is produced from the smoothed time series. The
 %code finds blink onset for each blink by looking at the velocity profile
-%of the region bound by the first zero and bwindow datapoints before the
-%zero and finding a value above a set threshold. Blink offset is done the
-%same on the region bounded by the last zero and bwindow datapoints after
-%the zero.
+%in the bwindow period before the first zero and finding a value above a 
+%set threshold. Blink offset is done the same on the bwindow period after 
+%the last zero.
 %
 %The interpolation is accomplished by defining the blink onset point as t2 
 %and the blink offset point as t3. A point in the data before blink
@@ -33,7 +33,7 @@ function output = blinkinterp(trial,samplerate,th1,th2,bwindow,betblink)
 %this can be found below). In this case, the t1-t2 and t3-t4 difference are
 %set as equal to betblink (unless the data points at t1 or t4 equal 0 or
 %nan, in which case t1/t4 is moved closer and closer to t2/t3 until a valid
-%data point is found. Then, a cubic spline interpolation is performed using
+%data point is found). Then, a cubic spline interpolation is performed using
 %the four points. If t1=t2 and/or t3=t4, then the interpolation is only
 %done with 3 or 2 points (the spline function can't handle repeat or out of
 %order points).
@@ -44,17 +44,17 @@ function output = blinkinterp(trial,samplerate,th1,th2,bwindow,betblink)
 %   samplerate = sample rate in Hz
 %
 %   th1 = (5) velocity threshold of pupil onset detection (set as a positive
-%   number, but is really negative)
+%   number, but is really negative, i.e., the pupil area is decreasing) 
 %
 %   th2 = (3) velocity threshold of pupil offset detection (is positive in both
-%   input and in script) (pupil offset is more gradual than
-%   onset, so more sensitive threshold needed)
+%   input and in script). Pupil offset is more gradual than
+%   onset, so a more sensitive (i.e., lower) threshold is needed.
 %
 %   bwindow = (50) time in ms from zero region program looks for
 %   blink onset, offset. This number should be restricted in general to
 %   avoid points not associated with the blink from being chosen. It also
-%   should be less than betblink to avoid the program from getting confused
-%   by data associated with other blinks.
+%   should be less than betblink to avoid interpolation using data from 
+%   another blink region.
 %
 %   betblink = (75) the minimum duration in ms required
 %   to form a valid region of data. This prevents small interblink
@@ -67,28 +67,30 @@ function output = blinkinterp(trial,samplerate,th1,th2,bwindow,betblink)
 %output:
 %   output = trial with blink regions removed and interpolated
 
-sf = 1000/samplerate;
+sf = 1000/samplerate; % sampling factor
 th1 = th1*sf;
 th2 = th2*sf;
 bwindow = bwindow/sf;
 betblink = betblink/sf;
 
+nhan = 11; % hanning window parameter
+ncushion = 10; % size of cushion for convolution
+intbound = 5; % minimum distance t2/t3 must be from beginning/end of trial
+
 if all(trial) == 0  %check to see if blink regions (zeros) exist in trial
     
     duration = length(trial);
+        
+    trial = [(trial(1)*ones(1,ncushion)) trial];  %add cushion for convultion
+    trial = [trial (trial(end)*ones(1,ncushion))];
     
-    intbound = 5; %the minimum distance t2/t3 must be from beginning/end of trial
-    
-    trial = [(trial(1)*ones(1,10)) trial];  %add cushion for convultion
-    trial = [trial (trial(end)*ones(1,10))];
-    
-    h = hanning(11); %function convolved with raw trial
+    h = hanning(nhan); %function convolved with raw trial
     htrial = conv(trial,h/sum(h),'same'); %generate smoothed trial (easier to read velocity profile
     
-    trial(1:10) = []; %remove cushions from trial
+    trial(1:ncushion) = []; %remove cushions from trial
     trial(duration+1:end) = [];
     
-    htrial(1:10) = []; %remove cushions from smoothed trial
+    htrial(1:ncushion) = []; %remove cushions from smoothed trial
     htrial(duration+1:end) = [];
     
     logtrial = trial ~= 0; %turn trial into a logical vector

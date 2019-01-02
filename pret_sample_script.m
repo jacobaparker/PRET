@@ -31,8 +31,8 @@ xlabel('time (ms)')
 ylabel('pupil size (proportion change from baseline')
 
 %% organize via pret_preprocess
-% data is already baseline normalized and has no blinks, so we need to
-% return options structure and turn off those features
+% data is already baseline normalized and has no blinks, so we
+% return the options structure and turn off those features
 options = pret_preprocess();
 options.normflag = false;
 options.blinkflag = false;
@@ -47,9 +47,11 @@ options.pret_estimate.optimnum = 3;
 sj = pret_estimate_sj(sj,model1,options);
 
 %% view best model fit via pret_plot_model and compare to mean of data1
+figure
 plot(time,sj.means.data1,'k','LineWidth',1.5)
 hold on
 pret_plot_model(sj.estim.data1);
+legend('data','model fit')
 
 %% perform bootstrapping procedure via pret_bootstrap_sj
 % lower of optimizations per estimation for demonstration purposes

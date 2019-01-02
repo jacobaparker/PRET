@@ -24,7 +24,7 @@ end
 
 %% event times
 if isempty(model.eventtimes) && (model.ampflag || model.latflag)
-    error('If event amplitude and/or event latency is to estimated,\nevent times must be provided in model.eventtimes')
+    error('If event amplitude and/or event latency is to be estimated,\nevent times must be provided in model.eventtimes')
 end
 
 %% box times

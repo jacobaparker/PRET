@@ -2,6 +2,7 @@ function params = pret_generate_params(num,parammode,model,options)
 % pret_generate_params
 % params = pret_generate_params(num, parammode, model)
 % params = pret_generate_params(num, parammode, model,options)
+% options = pret_generate_params()
 % 
 % Generates random parameters using the specifications of a given model.
 % 
@@ -10,21 +11,24 @@ function params = pret_generate_params(num,parammode,model,options)
 %       num = number of sets of parameters to be generated.
 %           *IMPORTANT - if 'uniform' used, this number must be divisible
 %           by options.nbins such that the resulting number is a whole
-%           number!
+%           number! %%% RD: is this still true?
 % 
 %       parammode ('uniform', 'normal', or 'space_optimal') = mode used to
 %       generate parameters.
-%           'uniform' - parameters are sampled in a roughly uniform manner
-%           from the range of their respective bounds. For each parameter,
-%           the range is split up into options.nbins number of bins and a
-%           floor(num/nbins) number of points is randomly generated from
-%           each bin using rand. The remainder of this division is then
-%           sampled from the entire range if it is not zero.
+%           'uniform' - parameters are attempted to be sampled evenly
+%           from the range of their respective bounds. When the number of 
+%           points sampled is relatively low, binning can help span the 
+%           parameter space. For each parameter, the range is split up 
+%           into options.nbins number of bins and a floor(num/nbins) number 
+%           of points is randomly and uniformly sampled from each bin. The 
+%           remaining points are then sampled from the entire range. 
 %           'normal' - parameters are drawn from a normal distrubtion
 %           centered around the values provided in the input model
 %           structure. The standard deviation is set by options.sigma.
-%       *option coming soon that finds the "num" number of parameter points
-%       that cover parameter space as uniformly possible.
+%       *'space_optimal' option coming soon that finds the "num" number of 
+%       parameter points that cover parameter space as uniformly possible.
+%       %%% RD: if space_optimal is not yet implemented, may want to remove
+%       the info about it from the help for the first release.
 % 
 %       model = model structure created by pret_model and filled in by user.
 %           *IMPORTANT - parameter values in model.ampvals,
@@ -77,7 +81,7 @@ end
 nbins = options.nbins;
 sigma = options.sigma;
 ampfact = options.ampfact;
-boxampfact = options.boxampfact;
+boxampfact = options.boxampfact; %%% RD: variable not used
 latfact = options.latfact;
 tmaxfact = options.tmaxfact;
 yintfact = options.yintfact;
@@ -85,6 +89,9 @@ yintfact = options.yintfact;
 %check inputs
 pret_model_check(model)
 
+%%% RD: check that num input is valid (integer >0)
+
+%set random number generator
 rng(0)
 
 params = struct('blank',[]);
@@ -97,7 +104,8 @@ params.boxampvals = nan(num,length(model.boxtimes));
 
 params = rmfield(params,'blank');
 
-if strcmp(parammode,'uniform')
+switch parammode
+    case 'uniform'
     
     %amplitude
     if model.ampflag
@@ -139,7 +147,8 @@ if strcmp(parammode,'uniform')
     else
         params.boxampvals = repmat(model.boxampvals,num,1);
     end
-elseif strcmp(parammode,'normal')
+    
+    case 'normal'
 
     if model.ampflag
         ampvals = model.ampvals .* ampfact;
@@ -192,6 +201,8 @@ elseif strcmp(parammode,'normal')
         params.boxampvals = repmat(model.boxampvals,num,1);
      end
     
+    otherwise
+        error('Input "parammode" not recognized.')
 end
 
     function dist = unibin(num,lb,ub,nbins)

@@ -1,7 +1,8 @@
 function sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline,options)
 % pret_preprocess
-% sj = pret_preprocess(data,trialwindow,samplerate,baseline)
-% sj = pret_preprocess(data,trialwindow,samplerate,baseline,options)
+% sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline)
+% sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline,options)
+% options = pret_preprocess()
 %
 % Prepare pupil area time series data for use with PRF linear model.
 %
@@ -20,7 +21,7 @@ function sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline,op
 %
 %       baseline = a 2 element vector containing the starting and ending
 %       times (in ms) of the region to be used to baseline normalize each
-%       trial (can be empty if normalization turned off).
+%       trial (can be empty if normalization is turned off).
 % 
 %       options = options structure for pret_preprocess. Default options can be
 %       returned by calling this function with no arguments, or see
@@ -89,9 +90,9 @@ if ~(any(time == trialwindow(1)) && any(time == trialwindow(2)))
 end
 
 %trialwindow vs length of trial
-for dd =1:length(data)
+for dd = 1:length(data)
     if size(data{dd},2) ~= length(time)
-        error('Trial length does not match information input about trial duration according to "trialwindow" and "sample rate"')
+        error('Trial length in "data" does not match information input about trial duration according to "trialwindow" and "sample rate"')
     end
 end
 
