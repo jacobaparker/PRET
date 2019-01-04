@@ -23,8 +23,8 @@ function sjs = pret_batch_process(sjs,model,nboots,wnum,options)
 %       nboots = if doing bootstrapping procedure, how many bootstrap
 %       iterations to do. Can be empty if not.
 % 
-%       wnum = if doing bootstrapping procedure, how many matlab workers to
-%       use while doing the bootstrapping procedure. Can be empty if not.
+%       wnum = how many Matlab workers to use if doing the estimation
+%       and/or bootstrapping procedures.
 % 
 %       options = options structure for pret_batch_process. Default options can be
 %       returned by calling this function with no arguments, or see
@@ -93,7 +93,7 @@ sjfields = fieldnames(sjs);
 
 for s = 1:length(sjfields)
     if estflag
-        sjs.(sjfields{s}) = pret_estimate_sj(sjs.(sjfields{s}),model,pret_estimate_sj_options);
+        sjs.(sjfields{s}) = pret_estimate_sj(sjs.(sjfields{s}),model,wnum,pret_estimate_sj_options);
     end
     if bootflag
         sjs.(sjfields{s}) = pret_bootstrap_sj(sjs.(sjfields{s}),model,nboots,wnum,pret_bootstrap_sj_options);

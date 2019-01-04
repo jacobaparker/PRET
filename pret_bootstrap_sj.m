@@ -21,6 +21,9 @@ function sj = pret_bootstrap_sj(sj,model,nboots,wnum,options)
 %           number of models and each element is a separate model
 %           structure*
 % 
+%       wnum = number of workers used by matlab's parallel pool to complete
+%       the process (parpool will not be initialized if set to 1).
+% 
 %       options = options structure for pret_bootstrap_sj. Default options can be
 %       returned by calling this function with no arguments, or see
 %       pret_default_options.

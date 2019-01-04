@@ -1,4 +1,4 @@
-function sj = pret_estimate_sj(sj,model,options)
+function sj = pret_estimate_sj(sj,model,wnum,options)
 % pret_estimate_sj
 % sj = pret_estimate_sj(sj,models)
 % sj = pret_estimate_sj(sj,models,options)
@@ -19,6 +19,9 @@ function sj = pret_estimate_sj(sj,model,options)
 %           Nx1 structure with the same fields as "model", where N is the
 %           number of models and each element is a separate model
 %           structure*
+% 
+%       wnum = number of workers used by matlab's parallel pool to complete
+%       the process (parpool will not be initialized if set to 1).
 % 
 %       options = options structure for pret_estimate_sj. Default options can be
 %       returned by calling this function with no arguments, or see
@@ -43,7 +46,7 @@ function sj = pret_estimate_sj(sj,model,options)
 %
 %   Jacob Parker 2018
 
-if nargin < 3
+if nargin < 4
     opts = pret_default_options();
     options = opts.pret_estimate_sj;
     clear opts
@@ -74,6 +77,6 @@ for mm = 1:length(model)
         cond = sj.conditions{cc};
         fprintf('Condition %s\n',cond)
         sj.estim.(cond)(mm) = pret_estimate(sj.means.(cond), ...
-            sj.samplerate, sj.trialwindow, model(mm), pret_estimate_options);
+            sj.samplerate, sj.trialwindow, model(mm), wnum, pret_estimate_options);
     end
 end

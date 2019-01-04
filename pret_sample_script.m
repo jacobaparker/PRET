@@ -41,10 +41,12 @@ sj = pret_preprocess({data1},samplerate,trialwindow,condlabels,[],options);
 
 %% estimate model parameters via pret_estimate_sj
 % lower number of optimizations completed for sake of demonstration
+% only use one cpu
 options = pret_estimate_sj();
 options.pret_estimate.optimnum = 3;
+wnum = 1;
 
-sj = pret_estimate_sj(sj,model1,options);
+sj = pret_estimate_sj(sj,model1,wnum,options);
 
 %% view best model fit via pret_plot_model and compare to mean of data1
 figure
