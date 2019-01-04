@@ -19,7 +19,7 @@
 % 
 % condlabels = the condition label for data1.
 
-% load pret_sample_data.mat
+load pret_sample_data.mat
 
 %% visualize sample data
 sfact = samplerate/1000;
