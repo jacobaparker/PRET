@@ -1,4 +1,4 @@
-function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model,options)
+function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model,wnum,options)
 % pret_estimate
 % [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model)
 % [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model,options)
@@ -26,6 +26,9 @@ function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
 %       model.tmaxval, and model.yintval do not need to be provided if they
 %       are being estimated but should be provided if they are not being estimated.
+% 
+%       wnum = number of workers used by matlab's parallel pool to complete
+%       the process (parpool will not be initialized if set to 1).
 % 
 %       options = options structure for pret_estimate. Default options can be
 %       returned by calling this function with no arguments, or see
@@ -81,7 +84,7 @@ function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model
 %
 %   Jacob Parker 2018
 
-if nargin < 5
+if nargin < 6
     opts = pret_default_options();
     options = opts.pret_estimate;
     clear opts
@@ -92,10 +95,9 @@ if nargin < 5
 end
 
 %OPTIONS
-%return output optimization parameters from each starting point?
 pret_generate_params_options = options.pret_generate_params;
 pret_optim_options = options.pret_optim;
-pret_cost_options = options.pret_cost; %%%% RD: "the scope of this variable spans multiple functions" bc it is used in search_param_space without being passed in
+pret_cost_options = options.pret_optim.pret_cost;
 searchnum = options.searchnum;
 optimnum = options.optimnum;
 parammode = options.parammode;
@@ -130,14 +132,6 @@ end
 %generate starting parameters for coarse search in parameter space
 params = pret_generate_params(searchnum,parammode,model,pret_generate_params_options);
 
-%ADD PARAM PRESORTING/MORE EVEN SAMPLING?
-%OPTIMAL PARAMETER SPACE SAMPLING (KEEP IN MIND)
-
-%structure to store temporary param values
-modelstate = model;
-modelstate.search = struct('ampvals',params.ampvals,'latvals',params.latvals,'tmaxval',params.tmaxvals,'yintval',params.yintvals,'boxampvals',params.boxampvals);
-%%% RD: any reason not to do modelstate.search = params?
-
 %crop data to match model.window
 datalb = find(model.window(1) == time);
 dataub = find(model.window(2) == time);
@@ -147,39 +141,58 @@ data = data(datalb:dataub);
 %space to determine which starting points to use for constrained
 %optimization, which is time consuming and computationally intensive 
 fprintf('\nDetermining best %d out of %d starting points for optimization algorithm\n',optimnum,searchnum)
-modelstate = search_param_space(data,searchnum,optimnum,modelstate);
+search = search_param_space(data,searchnum,optimnum,model,params,pret_cost_options);
 fprintf('Best %d starting points found\n',optimnum)
+
+%create a model structure for each optimization to be completed (enables
+%use of parfor loop)
+modelstate(optimnum) = model;
+for op = 1:optimnum
+    modelstate(op) = model;
+    modelstate(op).ampvals = search.ampvals(op,:);
+    modelstate(op).boxampvals = search.boxampvals(op,:);
+    modelstate(op).latvals = search.latvals(op,:);
+    modelstate(op).tmaxval = search.tmaxvals(op,:);
+    modelstate(op).yintval = search.yintvals(op,:);
+end  
 
 %perform constrained optimization on the best points from the coarse
 %parameter space search
-fprintf('\nBeginning optimization of best starting points\nOptims completed: ')
 searchoptims = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'cost',[],'R2',[],'BIC',[]);
-tempcosts = [];
-for op = 1:optimnum
-    modelstate.ampvals = modelstate.search.ampvals(modelstate.search.optimindex(op),:);
-    modelstate.boxampvals = modelstate.search.boxampvals(modelstate.search.optimindex(op),:);
-    modelstate.latvals = modelstate.search.latvals(modelstate.search.optimindex(op),:);
-    modelstate.tmaxval = modelstate.search.tmaxval(modelstate.search.optimindex(op),:);
-    modelstate.yintval = modelstate.search.yintval(modelstate.search.optimindex(op),:);
-    
-    searchoptims(op) = pret_optim(data,model.samplerate,model.window,modelstate,pret_optim_options);
-    tempcosts = [tempcosts searchoptims(op).cost];
-    fprintf('%d ',op)
+tempcosts = nan(optimnum,1);
+if wnum == 1
+    fprintf('\nBeginning optimization of best starting points\nOptims completed: ')
+    for op = 1:optimnum
+        searchoptims(op) = pret_optim(data,modelstate(op).samplerate,modelstate(op).window,modelstate(op),pret_optim_options);
+        tempcosts(op) = searchoptims(op).cost;
+        fprintf('%d ',op)
+    end
+else
+    p = gcp('nocreate');
+    if isempty(p)
+        parpool(wnum);
+    end
+    fprintf('\nBeginning optimization of best starting points\nOptims completed: ')
+    parfor op = 1:optimnum
+        searchoptims(op) = pret_optim(data,modelstate(op).samplerate,modelstate(op).window,modelstate(op),pret_optim_options);
+        tempcosts(op) = searchoptims(op).cost;
+        fprintf('%d ',op)
+    end
 end
 
 fprintf('\nOptimizations completed!\n')
 [~,minind] = min(tempcosts);
 estim = searchoptims(minind);
 
-    function modelstate = search_param_space(data,searchnum,optimnum,modelstate)
+    function search = search_param_space(data,searchnum,optimnum,modelstate,params,pret_cost_options)
         
         costs = nan(searchnum,1);
         for ss = 1:searchnum
-            modelstate.ampvals = modelstate.search.ampvals(ss,:);
-            modelstate.latvals = modelstate.search.latvals(ss,:);
-            modelstate.tmaxval = modelstate.search.tmaxval(ss);
-            modelstate.yintval = modelstate.search.yintval(ss);
-            modelstate.boxampvals = modelstate.search.boxampvals(ss,:);
+            modelstate.ampvals = params.ampvals(ss,:);
+            modelstate.latvals = params.latvals(ss,:);
+            modelstate.tmaxval = params.tmaxvals(ss);
+            modelstate.yintval = params.yintvals(ss);
+            modelstate.boxampvals = params.boxampvals(ss,:);
             costs(ss) = pret_cost(data,modelstate.samplerate,modelstate.window,modelstate,pret_cost_options);
         end
         
@@ -187,8 +200,13 @@ estim = searchoptims(minind);
         [~,rank] = sort(sortind);
         optimindex = find(rank <= optimnum);
         
-        modelstate.search.optimindex = optimindex;
-        modelstate.search.costs = costs;
+        search.ampvals = params.ampvals(optimindex,:);
+        search.latvals = params.latvals(optimindex,:);
+        search.tmaxvals = params.tmaxvals(optimindex,:);
+        search.yintvals = params.yintvals(optimindex,:);
+        search.boxampvals = params.boxampvals(optimindex,:);
+        search.optimindex = optimindex;
+        search.costs = costs;
         
     end
 

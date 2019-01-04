@@ -55,7 +55,6 @@ options.pret_estimate.searchnum = 2000;
 options.pret_estimate.optimnum = 40;
 options.pret_estimate.parammode = 'uniform';
 options.pret_estimate.pret_generate_params = options.pret_generate_params;
-options.pret_estimate.pret_cost = options.pret_cost;
 options.pret_estimate.pret_optim = options.pret_optim;
 
 %% pret_bootstrap

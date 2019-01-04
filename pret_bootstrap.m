@@ -131,17 +131,17 @@ fprintf('\nBeginning bootstrapping, %d iterations to be completed\n',nboots)
 if wnum == 1
     for nb = 1:nboots
         fprintf('\nStart iteration %d\n',nb)
-        bootestims(nb) = pret_estimate(means(nb,:),modelsamplerate,modelwindow,model,pret_estimate_options);
+        bootestims(nb) = pret_estimate(means(nb,:),modelsamplerate,modelwindow,model,1,pret_estimate_options);
         fprintf('\nEnd iteration %d\n',nb)
     end
 else
     p = gcp('nocreate');
     if isempty(p)
-        parpool(wnum)
+        parpool(wnum);
     end
     parfor nb = 1:nboots
         fprintf('\nStart iteration %d\n',nb)
-        bootestims(nb) = pret_estimate(means(nb,:),modelsamplerate,modelwindow,model,pret_estimate_options);
+        bootestims(nb) = pret_estimate(means(nb,:),modelsamplerate,modelwindow,model,1,pret_estimate_options);
         fprintf('\nEnd iteration %d\n',nb)
     end
 end
