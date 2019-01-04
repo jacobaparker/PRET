@@ -47,6 +47,7 @@ function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model
 %           latvals = the estimated event latency values.
 %           tmaxval = the estimated tmax value.
 %           yintval = the estimated y-intercept value.
+%           numparams = number of parameters fit.
 %           cost = the sum of square errors between the optimized
 %           parameters and the actual data.
 %           R2 = the R^2 goodness of fit value
@@ -154,11 +155,12 @@ for op = 1:optimnum
     modelstate(op).latvals = search.latvals(op,:);
     modelstate(op).tmaxval = search.tmaxvals(op,:);
     modelstate(op).yintval = search.yintvals(op,:);
+    modelstate(op).slopeval = search.slopevals(op,:);
 end  
 
 %perform constrained optimization on the best points from the coarse
 %parameter space search
-searchoptims = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'cost',[],'R2',[],'BIC',[]);
+searchoptims = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'slopeval',[],'numparams',[],'cost',[],'R2',[],'BIC',[]);
 tempcosts = nan(optimnum,1);
 if wnum == 1
     fprintf('\nBeginning optimization of best starting points\nOptims completed: ')
@@ -192,6 +194,7 @@ estim = searchoptims(minind);
             modelstate.latvals = params.latvals(ss,:);
             modelstate.tmaxval = params.tmaxvals(ss);
             modelstate.yintval = params.yintvals(ss);
+            modelstate.slopeval = params.slopevals(ss);
             modelstate.boxampvals = params.boxampvals(ss,:);
             costs(ss) = pret_cost(data,modelstate.samplerate,modelstate.window,modelstate,pret_cost_options);
         end
@@ -204,6 +207,7 @@ estim = searchoptims(minind);
         search.latvals = params.latvals(optimindex,:);
         search.tmaxvals = params.tmaxvals(optimindex,:);
         search.yintvals = params.yintvals(optimindex,:);
+        search.slopevals = params.slopevals(optimindex,:);
         search.boxampvals = params.boxampvals(optimindex,:);
         search.optimindex = optimindex;
         search.costs = costs;

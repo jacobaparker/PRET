@@ -30,6 +30,7 @@ options.pret_optim.boxampfact = 1/10;
 options.pret_optim.latfact = 1/1000;
 options.pret_optim.tmaxfact = 1/1000;
 options.pret_optim.yintfact = 10;
+options.pret_optim.slopefact = 10000;
 options.pret_optim.pret_cost = options.pret_cost;
 
 %input values/options for fmincon
@@ -49,6 +50,7 @@ options.pret_generate_params.boxampfact = 1/10;
 options.pret_generate_params.latfact = 1/1000;
 options.pret_generate_params.tmaxfact = 1/1000;
 options.pret_generate_params.yintfact = 10;
+options.pret_generate_params.slopefact = 10000;
 
 %% pret_estimate
 options.pret_estimate.searchnum = 2000;

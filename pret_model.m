@@ -29,6 +29,7 @@ model.boxampflag = true;    %box amplitude to be estimated as a parameter: true/
 model.latflag = true;       %latency to be estimated as a parameter (not for boxes): true/false
 model.tmaxflag = true;      %tmax to be estimated as a parameter: true/false
 model.yintflag = true;      %y-intercept to be estimated as a parameter: true/false
+model.slopeflag = true;
 
 %% define instantaneous events/box regressors
 % vectors containing the time of occurrence (in ms) for each
@@ -67,6 +68,7 @@ model.latbounds = [];
 % (not important if tmax and/or y-intercept not to be estimated)
 model.tmaxbounds = [];
 model.yintbounds = [];
+model.slopebounds = [];
 
 
 %% define default parameter values
@@ -83,4 +85,5 @@ model.latvals = [];
 % be provided if not being estimated)
 model.tmaxval = [];
 model.yintval = [];
+model.slopeval = [];
 

@@ -9,26 +9,23 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 %   Inputs:
 %   
 %       numtseries = number of time series to generate
-%           *IMPORTANT - if 'uniform' used, this number must be divisible
-%           by options.pret_generate_params.nbins such that the resulting number 
-%           is a whole number!
 % 
 %       parammode ('uniform', 'normal', or 'space_optimal') = mode used to
-%       generate parameters in the function pret_generate_params.
-%           'uniform' - parameters are sampled in a roughly uniform manner
-%           from the range of their respective bounds. For each parameter,
-%           a uniform distribution is created using rand, then points are
-%           sampled from 50 bins along this distribution spanning its
-%           entire range. To change the number of bins, see 
-%           options.pret_generate_params.nbins.
+%       generate parameters.
+%           'uniform' - parameters are attempted to be sampled evenly
+%           from the range of their respective bounds. When the number of 
+%           points sampled is relatively low, binning can help span the 
+%           parameter space. For each parameter, the range is split up 
+%           into options.nbins number of bins and a floor(num/nbins) number 
+%           of points is randomly and uniformly sampled from each bin. The 
+%           remaining points are then sampled from the entire range. 
 %           'normal' - parameters are drawn from a normal distrubtion
 %           centered around the values provided in the input model
 %           structure. The standard deviation is set by options.sigma.
-%           'space_optimal' - finds the "num" number of points that
-%           optimally cover the parameter space as defined by the
-%           parameter bounds. Uses fmincon, so parameters need to be scaled
-%           using options.ampfact, options.latfact, options.tmaxfact, and
-%           options.yintfact.
+%       *'space_optimal' option coming soon that finds the "num" number of 
+%       parameter points that cover parameter space as uniformly possible.
+%       %%% RD: if space_optimal is not yet implemented, may want to remove
+%       the info about it from the help for the first release.
 % 
 %       samplerate = sampling rate of data in Hz. Can be different than the
 %       value in the model.samplerate if desired.
@@ -110,6 +107,7 @@ for ts = 1:numtseries
         modelstate.latvals = params.latvals(ts,:);
         modelstate.tmaxval = params.tmaxvals(ts);
         modelstate.yintval = params.yintvals(ts);
+        modelstate.slope = params.slopevals(ts);
     end
     if ~isempty(model.boxtimes)
         modelstate.boxampvals = params.boxampvals(ts,:);
@@ -117,5 +115,5 @@ for ts = 1:numtseries
     data(ts,:) = pret_calc(modelstate);
 end
 
-outparams = struct('eventimes',model.eventtimes,'boxtimes',model.boxtimes,'ampvals',params.ampvals,'boxampvals',params.boxampvals,'latvals',params.latvals,'tmaxvals',params.tmaxvals,'yintvals',params.yintvals);
+outparams = struct('eventimes',model.eventtimes,'boxtimes',model.boxtimes,'ampvals',params.ampvals,'boxampvals',params.boxampvals,'latvals',params.latvals,'tmaxvals',params.tmaxvals,'yintvals',params.yintvals,'slopevals',params.slopevals);
 

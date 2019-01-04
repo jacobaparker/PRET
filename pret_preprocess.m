@@ -102,7 +102,7 @@ if length(condlabels) ~= length(data)
 end
 
 %preallocate output structure sj
-sj = struct('samplerate',samplerate,'trialwindow',trialwindow,'conditions',{condlabels});
+sj = struct('samplerate',samplerate,'trialwindow',trialwindow,'conditions',{condlabels},'baseline',baseline);
 datatemp = cell(1,length(data));
 for cc = 1:length(condlabels)
     sj.(condlabels{cc}) = nan(size(data{cc},1),size(data{cc},2));

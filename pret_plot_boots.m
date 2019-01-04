@@ -146,6 +146,24 @@ if model.yintflag
 
 end
 
+if model.slopeflag
+
+    %y-intercept plot
+    fhs = [fhs figure];
+    set(gcf,'Position',[600 100 560 420])
+    hold on
+    xlim([0 2])
+    boxwhisker(boots.slopevals,1)
+    set(gca,'FontSize',12)
+    set(gca,'XTick',1)
+%     xticks(1)
+    set(gca,'XTickLabel',{'slope'})
+%     xticklabels({'y-intercept'})
+    ylabel('Amplitude/time (% change/ms)','FontSize',16)
+    title('slope Bootstrap Estimates','FontSize',16)
+
+end
+
 
     function boxwhisker(x,g)
         % draws single vertical box and whsiker plot from distribution x at x axis

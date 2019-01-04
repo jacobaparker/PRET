@@ -122,7 +122,7 @@ data = data(:,datalb:dataub);
 rng(0)
 means = bootstrp(nboots,@nanmean,data);
 
-bootestims = struct('eventtimes',model.eventtimes,'boxtimes',model.boxtimes,'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'cost',[],'R2',[],'BIC',[]);
+bootestims = struct('eventtimes',model.eventtimes,'boxtimes',model.boxtimes,'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'slopeval',[],'numparams',[],'cost',[],'R2',[],'BIC',[]);
 modelsamplerate = model.samplerate;
 modelwindow = model.window;
 
@@ -147,7 +147,7 @@ else
 end
 fprintf('Boostrapping completed!\n')
 
-boots = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',nan(nboots,length(model.eventtimes)),'boxampvals',nan(nboots,length(model.boxtimes)),'latvals',nan(nboots,length(model.eventtimes)),'tmaxvals',nan(nboots,1),'yintvals',nan(nboots,1),'costs',nan(nboots,1),'R2',nan(nboots,1));
+boots = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',nan(nboots,length(model.eventtimes)),'boxampvals',nan(nboots,length(model.boxtimes)),'latvals',nan(nboots,length(model.eventtimes)),'tmaxvals',nan(nboots,1),'yintvals',nan(nboots,1),'slopevals',nan(nboots,1),'costs',nan(nboots,1),'R2',nan(nboots,1));
 
 for nb = 1:nboots
     boots.ampvals(nb,:) = bootestims(nb).ampvals;
@@ -155,6 +155,7 @@ for nb = 1:nboots
     boots.latvals(nb,:) = bootestims(nb).latvals;
     boots.tmaxvals(nb,:) = bootestims(nb).tmaxval;
     boots.yintvals(nb,:) = bootestims(nb).yintval;
+    boots.slopevals(nb,:) = bootestims(nb).slopeval;
     boots.costs(nb) = bootestims(nb).cost;
     boots.R2(nb) = bootestims(nb).R2;
 end
@@ -164,12 +165,14 @@ boots.boxampmedians = nanmedian(boots.boxampvals,1);
 boots.latmedians = nanmedian(boots.latvals,1);
 boots.tmaxmedian = nanmedian(boots.tmaxvals,1);
 boots.yintmedian = nanmedian(boots.yintvals,1);
+boots.slopemedian = nanmedian(boots.slopevals,1);
 
 boots.amp95CIs = [prctile(boots.ampvals,2.5,1) ; prctile(boots.ampvals,97.5,1)];
 boots.boxamp95CIs = [prctile(boots.boxampvals,2.5,1) ; prctile(boots.boxampvals,97.5,1)];
 boots.lat95CIs = [prctile(boots.latvals,2.5,1) ; prctile(boots.latvals,97.5,1)];
 boots.tmax95CI = [prctile(boots.tmaxvals,2.5) ; prctile(boots.tmaxvals,97.5)];
 boots.yint95CI = [prctile(boots.yintvals,2.5) ; prctile(boots.yintvals,97.5)];
+boots.slope95CI = [prctile(boots.slopevals,2.5) ; prctile(boots.slopevals,97.5)];
 
 if bootplotflag
     pret_plot_boots(boots,model);

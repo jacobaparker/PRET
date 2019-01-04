@@ -42,6 +42,8 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 %           latvals = the event latency values fit.
 %           tmaxval = the tmax value fit.
 %           yintval = the y-intercept value fit.
+%           slopeval = the slope value fit.
+%           numparams = number of parameters fit.
 %           cost = the sum of square errors between the optimized
 %           parameters and the actual data.
 %           R2 = the R^2 goodness of fit value.
@@ -94,6 +96,7 @@ boxampfact = options.boxampfact;
 latfact = options.latfact;
 tmaxfact = options.tmaxfact;
 yintfact = options.yintfact;
+slopefact = options.slopefact;
 
 %input values/options for fmincon
 A = options.A;
@@ -177,6 +180,13 @@ if model.yintflag
     numparams = numparams + length(model.yintval);
 end
 
+if model.slopeflag
+    X = [X model.slopeval.*slopefact];
+    lb = [lb model.slopebounds(1).*slopefact];
+    ub = [ub model.slopebounds(2).*slopefact];
+    numparams = numparams + length(model.slopeval);
+end
+
 f = @(X)optim_cost(X,data,model);
 
 if optimplotflag
@@ -189,7 +199,8 @@ SSt = sum((data-nanmean(data)).^2);
 [X, cost] = fmincon(f,X,A,B,Aeq,Beq,lb,ub,NONLCON,fmincon_options);
 
 modelstate = unloadX(X,modelstate);
-optim = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',modelstate.ampvals,'boxampvals',modelstate.boxampvals,'latvals',modelstate.latvals,'tmaxval',modelstate.tmaxval,'yintval',modelstate.yintval);
+optim = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',modelstate.ampvals,'boxampvals',modelstate.boxampvals,'latvals',modelstate.latvals,'tmaxval',modelstate.tmaxval,'yintval',modelstate.yintval,'slopeval',modelstate.slopeval);
+optim.numparams = numparams;
 optim.cost = cost;
 optim.R2 = 1 - (cost/SSt);
 optim.BIC = (length(data) * log(cost/length(data))) + (numparams *log(length(data)));
@@ -261,7 +272,13 @@ optim.BIC = (length(data) * log(cost/length(data))) + (numparams *log(length(dat
             numt = 0;
         end
         if modelstate.yintflag
+            numy = 1;
             modelstate.yintval = X(numEA+numBA+numL+numt+1) .* (1/yintfact);
+        else
+            numy = 0;
+        end
+        if modelstate.slopeflag
+            modelstate.slopeval = X(numEA+numBA+numL+numt+numy+1) .* (1/slopefact);
         end
     end
 

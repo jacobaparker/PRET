@@ -19,14 +19,14 @@
 % 
 % condlabels = the condition label for data1.
 
-load pret_sample_data.mat
+% load pret_sample_data.mat
 
 %% visualize sample data
 sfact = samplerate/1000;
 time = trialwindow(1):1/sfact:trialwindow(2);
 
 figure
-plot(time,data1)
+plot(time,data2)
 xlabel('time (ms)')
 ylabel('pupil size (proportion change from baseline')
 
@@ -37,7 +37,7 @@ options = pret_preprocess();
 options.normflag = false;
 options.blinkflag = false;
 
-sj = pret_preprocess({data1},samplerate,trialwindow,condlabels,[],options);
+sj = pret_preprocess({data2},samplerate,trialwindow,condlabels,[],options);
 
 %% estimate model parameters via pret_estimate_sj
 % lower number of optimizations completed for sake of demonstration
@@ -46,13 +46,13 @@ options = pret_estimate_sj();
 options.pret_estimate.optimnum = 3;
 wnum = 1;
 
-sj = pret_estimate_sj(sj,model1,wnum,options);
+sj = pret_estimate_sj(sj,model2,wnum,options);
 
 %% view best model fit via pret_plot_model and compare to mean of data1
 figure
-plot(time,sj.means.data1,'k','LineWidth',1.5)
+plot(time,sj.means.data2,'k','LineWidth',1.5)
 hold on
-pret_plot_model(sj.estim.data1);
+pret_plot_model(sj.estim.data2);
 legend('data','model fit')
 
 %% perform bootstrapping procedure via pret_bootstrap_sj
@@ -64,4 +64,4 @@ options = pret_bootstrap_sj();
 options.pret_bootstrap.pret_estimate.optimnum = 3;
 wnum = 1;
 
-sj = pret_bootstrap_sj(sj,model1,5,wnum,options);
+sj = pret_bootstrap_sj(sj,model2,5,wnum,options);

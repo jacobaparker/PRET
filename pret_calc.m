@@ -80,7 +80,7 @@ for bx = 1:size(X2,1)
 end
 
 X = [X1 ; X2];
-Ycalc = sum(X,1) + model.yintval;
+Ycalc = sum(X,1) + model.slopeval*time + model.yintval;
 
     function optim_check(model)
         %window
@@ -132,6 +132,11 @@ Ycalc = sum(X,1) + model.yintval;
         %y-intercept
         if length(model.yintval) ~= 1
             error('Number of default y-intercept values not equal to 1')
+        end
+        
+        %slope
+        if length(model.slopeval) ~= 1
+            error('Number of default slope values not equal to 1')
         end
     end
 

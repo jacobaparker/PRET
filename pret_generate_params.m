@@ -9,9 +9,6 @@ function params = pret_generate_params(num,parammode,model,options)
 %   Inputs:
 %   
 %       num = number of sets of parameters to be generated.
-%           *IMPORTANT - if 'uniform' used, this number must be divisible
-%           by options.nbins such that the resulting number is a whole
-%           number! %%% RD: is this still true?
 % 
 %       parammode ('uniform', 'normal', or 'space_optimal') = mode used to
 %       generate parameters.
@@ -81,10 +78,11 @@ end
 nbins = options.nbins;
 sigma = options.sigma;
 ampfact = options.ampfact;
-boxampfact = options.boxampfact; %%% RD: variable not used
+boxampfact = options.boxampfact;
 latfact = options.latfact;
 tmaxfact = options.tmaxfact;
 yintfact = options.yintfact;
+slopefact = options.slopefact;
 
 %check inputs
 pret_model_check(model)
@@ -100,107 +98,124 @@ params.ampvals = nan(num,length(model.eventtimes));
 params.latvals = nan(num,length(model.eventtimes));
 params.tmaxvals = nan(num,1);
 params.yintvals = nan(num,1);
+params.slopevals = nan(num,1);
 params.boxampvals = nan(num,length(model.boxtimes));
 
 params = rmfield(params,'blank');
 
 switch parammode
     case 'uniform'
-    
-    %amplitude
-    if model.ampflag
-        for cc = 1:length(model.eventtimes)
-            params.ampvals(:,cc) = unibin(num,model.ampbounds(1,cc),model.ampbounds(2,cc),nbins);
+        
+        %amplitude
+        if model.ampflag
+            for cc = 1:length(model.eventtimes)
+                params.ampvals(:,cc) = unibin(num,model.ampbounds(1,cc),model.ampbounds(2,cc),nbins);
+            end
+        else
+            params.ampvals = repmat(model.ampvals,num,1);
         end
-    else
-        params.ampvals = repmat(model.ampvals,num,1);
-    end
-    
-    %latency
-    if model.latflag
-        for cc = 1:length(model.eventtimes)
-            params.latvals(:,cc) = unibin(num,model.latbounds(1,cc),model.latbounds(2,cc),nbins);
+        
+        %latency
+        if model.latflag
+            for cc = 1:length(model.eventtimes)
+                params.latvals(:,cc) = unibin(num,model.latbounds(1,cc),model.latbounds(2,cc),nbins);
+            end
+        else
+            params.latvals = repmat(model.latvals,num,1);
         end
-    else
-        params.latvals = repmat(model.latvals,num,1);
-    end
-    
-    %tmax
-    if model.tmaxflag
-        params.tmaxvals = unibin(num,model.tmaxbounds(1),model.tmaxbounds(2),nbins);
-    else
-        params.tmaxvals = repmat(model.tmaxval,num,1);
-    end
-    
-    %y-intercept
-    if model.yintflag
-        params.yintvals = unibin(num,model.yintbounds(1),model.yintbounds(2),nbins);
-    else
-        params.yintvals = repmat(model.yintval,num,1);
-    end
-    
-    %box amplitude
-    if model.ampflag
-        for cc = 1:length(model.boxtimes)
-            params.boxampvals(:,cc) = unibin(num,model.boxampbounds(1,cc),model.ampbounds(2,cc),nbins);
+        
+        %tmax
+        if model.tmaxflag
+            params.tmaxvals = unibin(num,model.tmaxbounds(1),model.tmaxbounds(2),nbins);
+        else
+            params.tmaxvals = repmat(model.tmaxval,num,1);
         end
-    else
-        params.boxampvals = repmat(model.boxampvals,num,1);
-    end
-    
+        
+        %y-intercept
+        if model.yintflag
+            params.yintvals = unibin(num,model.yintbounds(1),model.yintbounds(2),nbins);
+        else
+            params.yintvals = repmat(model.yintval,num,1);
+        end
+        
+        %slope
+        if model.slopeflag
+            params.slopevals = unibin(num,model.slopebounds(1),model.slopebounds(2),nbins);
+        else
+            params.slopevals = repmat(model.slopeval,num,1);
+        end
+        
+        %box amplitude
+        if model.boxampflag
+            for cc = 1:length(model.boxtimes)
+                params.boxampvals(:,cc) = unibin(num,model.boxampbounds(1,cc),model.boxampbounds(2,cc),nbins);
+            end
+        else
+            params.boxampvals = repmat(model.boxampvals,num,1);
+        end
+        
     case 'normal'
-
-    if model.ampflag
-        ampvals = model.ampvals .* ampfact;
-        for cc = 1:length(model.eventtimes)
-            params.ampvals(:,cc) = (ampvals(cc) + randn(num,1) .* sigma) .* 1/ampfact;
+        
+        if model.ampflag
+            ampvals = model.ampvals .* ampfact;
+            for cc = 1:length(model.eventtimes)
+                params.ampvals(:,cc) = (ampvals(cc) + randn(num,1) .* sigma) .* 1/ampfact;
+            end
+            params.ampvals(params.ampvals < model.ampbounds(1,cc)) = model.ampbounds(1,cc);
+            params.ampvals(params.ampvals > model.ampbounds(2,cc)) = model.ampbounds(2,cc);
+        else
+            params.ampvals = repmat(model.ampvals,num,1);
         end
-        params.ampvals(params.ampvals < model.ampbounds(1,cc)) = model.ampbounds(1,cc);
-        params.ampvals(params.ampvals > model.ampbounds(2,cc)) = model.ampbounds(2,cc);
-     else
-        params.ampvals = repmat(model.ampvals,num,1);
-     end
-     
-     if model.latflag
-        latvals = model.latvals .* latfact;
-        for cc = 1:length(model.eventtimes)
-            params.latvals(:,cc) = (latvals(cc) + randn(num,1) .* sigma) .* 1/latfact;
+        
+        if model.latflag
+            latvals = model.latvals .* latfact;
+            for cc = 1:length(model.eventtimes)
+                params.latvals(:,cc) = (latvals(cc) + randn(num,1) .* sigma) .* 1/latfact;
+            end
+            params.latvals(params.latvals < model.latbounds(1,cc)) = model.latbounds(1,cc);
+            params.latvals(params.latvals > model.latbounds(2,cc)) = model.latbounds(2,cc);
+        else
+            params.latvals = repmat(model.latvals,num,1);
         end
-        params.latvals(params.latvals < model.latbounds(1,cc)) = model.latbounds(1,cc);
-        params.latvals(params.latvals > model.latbounds(2,cc)) = model.latbounds(2,cc);
-     else
-        params.latvals = repmat(model.latvals,num,1);
-     end
-     
-     if model.tmaxflag
-        tmaxval = model.tmaxval .* tmaxfact;
-        params.tmaxvals = (tmaxval + randn(num,1) .* sigma) .* 1/tmaxfact;
-        params.tmaxvals(params.tmaxvals < model.tmaxbounds(1)) = model.tmaxbounds(1);
-        params.tmaxvals(params.tmaxvals > model.tmaxbounds(2)) = model.tmaxbounds(2);
-     else
-        params.tmaxvals = repmat(model.tmaxval,num,1);
-     end
-     
-     if model.yintflag
-        yintval = model.yintval .* yintfact;
-        params.yintvals = (yintval + randn(num,1) .* sigma) .* 1/yintfact;
-        params.yintvals(params.yintvals < model.yintbounds(1)) = model.yintbounds(1);
-        params.yintvals(params.yintvals > model.yintbounds(2)) = model.yintbounds(2);
-     else
-        params.yintvals = repmat(model.yintval,num,1);
-     end
-
-     if model.boxampflag
-        boxampvals = model.boxampvals .* ampfact;
-        for cc = 1:length(model.boxtimes)
-            params.boxampvals(:,cc) = (boxampvals(cc) + randn(num,1) .* sigma) .* 1/ampfact;
+        
+        if model.tmaxflag
+            tmaxval = model.tmaxval .* tmaxfact;
+            params.tmaxvals = (tmaxval + randn(num,1) .* sigma) .* 1/tmaxfact;
+            params.tmaxvals(params.tmaxvals < model.tmaxbounds(1)) = model.tmaxbounds(1);
+            params.tmaxvals(params.tmaxvals > model.tmaxbounds(2)) = model.tmaxbounds(2);
+        else
+            params.tmaxvals = repmat(model.tmaxval,num,1);
         end
-        params.boxampvals(params.boxampvals < model.boxampbounds(1,cc)) = model.boxampbounds(1,cc);
-        params.boxampvals(params.boxampvals > model.boxampbounds(2,cc)) = model.boxampbounds(2,cc);
-     else
-        params.boxampvals = repmat(model.boxampvals,num,1);
-     end
-    
+        
+        if model.yintflag
+            yintval = model.yintval .* yintfact;
+            params.yintvals = (yintval + randn(num,1) .* sigma) .* 1/yintfact;
+            params.yintvals(params.yintvals < model.yintbounds(1)) = model.yintbounds(1);
+            params.yintvals(params.yintvals > model.yintbounds(2)) = model.yintbounds(2);
+        else
+            params.yintvals = repmat(model.yintval,num,1);
+        end
+        
+        if model.slopeflag
+            slopeval = model.slopeval .* slopefact;
+            params.slopevals = (slopeval + randn(num,1) .* sigma) .* 1/slopefact;
+            params.slopevals(params.slopevals < model.slopebounds(1)) = model.slopebounds(1);
+            params.slopevals(params.slopevals > model.slopebounds(2)) = model.slopebounds(2);
+        else
+            params.slopevals = repmat(model.slopeval,num,1);
+        end
+        
+        if model.boxampflag
+            boxampvals = model.boxampvals .* boxampfact;
+            for cc = 1:length(model.boxtimes)
+                params.boxampvals(:,cc) = (boxampvals(cc) + randn(num,1) .* sigma) .* 1/boxampfact;
+            end
+            params.boxampvals(params.boxampvals < model.boxampbounds(1,cc)) = model.boxampbounds(1,cc);
+            params.boxampvals(params.boxampvals > model.boxampbounds(2,cc)) = model.boxampbounds(2,cc);
+        else
+            params.boxampvals = repmat(model.boxampvals,num,1);
+        end
+        
     otherwise
         error('Input "parammode" not recognized.')
 end

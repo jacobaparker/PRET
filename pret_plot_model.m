@@ -58,6 +58,7 @@ X = X + model.yintval;
 
 fh = gcf;
 hold on
+plot(time,model.slopeval*time + model.yintval,'k','LineWidth',1);
 plot(time,Ycalc,'--','color',[0.6 0.6 0.6],'LineWidth',1.5)
 ax = gca;
 ax.ColorOrderIndex = 1;
@@ -121,6 +122,11 @@ ylabel('Pupil area (proportion change)','FontSize',16)
         %y-intercept
         if length(model.yintval) ~= 1
             error('Number of default y-intercept values not equal to 1')
+        end
+        
+        %slope
+        if length(model.slopeval) ~= 1
+            error('Number of default slope values not equal to 1')
         end
     end
 
