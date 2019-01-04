@@ -47,6 +47,7 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 %           cost = the sum of square errors between the optimized
 %           parameters and the actual data.
 %           R2 = the R^2 goodness of fit value.
+%           %%% RD: add BIC?
 %       *Note - can be input into pret_plot_model and pret_calc in the 
 %       place of the "model" input*
 % 
