@@ -258,6 +258,11 @@ optim.BIC = (length(data) * log(cost/length(data))) + (numparams *log(length(dat
             numL = numevents;
             Btemp = modelstate.ampvals;
             Ltemp = X(numEA+numBA+1:numEA+numBA+numL).*(1/latfact);
+            %sort component pupil responses by the order they occur in on
+            %the basis of eventtime + latency
+            %ensures that sequential pupil responses are ascribed to the
+            %proper event by assuming the event-related responses occur in
+            %the same order as the events occur
             [~,ind] = sort(modelstate.eventtimes + Ltemp);
             Ltemp = Ltemp(ind);
             Btemp = Btemp(ind);
