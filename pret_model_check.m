@@ -60,7 +60,7 @@ if ~isempty(model.boxtimes)
             error('All cells in boxtimes must be a 2 element vector')
         end
         if ~(any(model.boxtimes{ii}(1) == time)) || ~(any(model.boxtimes{ii}(2) == time))
-            error('Box %d start and end time points do not fall on time vector defined by\nmodel.window and model.samplerate',ii)
+            warning('Box %d start and end time points do not fall on time vector defined by\nmodel.window and model.samplerate',ii)
         end
     end
 end
