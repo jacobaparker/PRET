@@ -82,12 +82,12 @@ options.pret_preprocess.betblink = 75;
 %% pret_estimate_sj
 options.pret_estimate_sj.pret_estimate = options.pret_estimate;
 options.pret_estimate_sj.saveflag = false;
-options.pret_estimate_sj.savedir = '';
+options.pret_estimate_sj.savefile = '';
 
 %% pret_bootstrap_sj
 options.pret_bootstrap_sj.pret_bootstrap = options.pret_bootstrap;
 options.pret_bootstrap_sj.saveflag = false;
-options.pret_bootstrap_sj.savedir = '';
+options.pret_bootstrap_sj.savefile = '';
 
 %% pret_batch_process
 options.pret_batch_process.estflag = true;

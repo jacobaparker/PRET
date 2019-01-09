@@ -46,7 +46,7 @@ function sj = pret_bootstrap_sj(sj,model,nboots,wnum,options)
 %       saveflag (true/false) = save a .mat file with the output sj
 %       variable?
 % 
-%       savedir = if saveflag true, save .mat file to this dir (include
+%       savefile = if saveflag true, save .mat file to this dir (include
 %       name of course)
 %
 %   Jacob Parker 2018
@@ -64,7 +64,7 @@ end
 %OPTIONS
 pret_bootstrap_options = options.pret_bootstrap;
 saveflag = options.saveflag;
-savedir = options.savedir;
+savefile = options.savefile;
 
 %check model
 for mm = 1:length(model)
@@ -84,8 +84,7 @@ for mm = 1:length(model)
         fprintf('\nCondition %s\n',sj.conditions{cc})
         sj.boots.(sj.conditions{cc})(mm) = pret_bootstrap(sj.(sj.conditions{cc}),sj.samplerate,sj.trialwindow,model(mm),nboots,wnum,pret_bootstrap_options);
     end
-end
-
-if saveflag
-    save(savedir,'sj')
+    if saveflag
+        save(savefile,'sj')
+    end
 end

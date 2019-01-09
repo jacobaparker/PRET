@@ -47,7 +47,7 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 %       saveflag (true/false) = save a .mat file with the output sj
 %       variable?
 % 
-%       savedir = if saveflag true, save .mat file to this dir (include
+%       savefile = if saveflag true, save .mat file to this dir (include
 %       name of course)
 %
 %   Jacob Parker 2018
@@ -65,7 +65,7 @@ end
 %OPTIONS
 pret_estimate_options = options.pret_estimate;
 saveflag = options.saveflag;
-savedir = options.savedir;
+savefile = options.savefile;
 
 %check model
 for mm = 1:length(model)
@@ -87,8 +87,7 @@ for mm = 1:length(model)
         sj.estim.(cond)(mm) = pret_estimate(sj.means.(cond), ...
             sj.samplerate, sj.trialwindow, model(mm), wnum, pret_estimate_options);
     end
-end
-
-if saveflag
-    save(savedir,'sj')
+    if saveflag
+        save(savefile,'sj')
+    end
 end
