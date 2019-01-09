@@ -86,8 +86,9 @@ for mm = 1:length(model)
         fprintf('Condition %s\n',cond)
         sj.estim.(cond)(mm) = pret_estimate(sj.means.(cond), ...
             sj.samplerate, sj.trialwindow, model(mm), wnum, pret_estimate_options);
-    end
-    if saveflag
-        save(savefile,'sj')
+        
+        if saveflag
+            save(savefile,'sj')
+        end
     end
 end
