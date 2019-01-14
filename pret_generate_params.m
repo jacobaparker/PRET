@@ -61,6 +61,8 @@ function params = pret_generate_params(num,parammode,model,options)
 %       the scaling factors for amplitude, latency, tmax, and y-intercept
 %       parameters respectively. This is necessary because fmincon is used
 %       to determine the optimal sets of parameters.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -83,9 +85,10 @@ latfact = options.latfact;
 tmaxfact = options.tmaxfact;
 yintfact = options.yintfact;
 slopefact = options.slopefact;
+pret_model_check_options = options.pret_model_check;
 
 %check inputs
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
 %%% RD: check that num input is valid (integer >0)
 

@@ -82,6 +82,8 @@ function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model
 %       pret_cost_options = options structure for pret_cost, which pret_estimate 
 %       uses to evaluate the cost function at each point sampled from
 %       parameter space.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -102,13 +104,14 @@ pret_cost_options = options.pret_optim.pret_cost;
 searchnum = options.searchnum;
 optimnum = options.optimnum;
 parammode = options.parammode;
+pret_model_check_options = options.pret_model_check;
 
 sfact = samplerate/1000;
 time = trialwindow(1):1/sfact:trialwindow(2);
 
 %check inputs
 %simple check of input model structure
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
 %data is a vector
 if size(data,1) ~= 1

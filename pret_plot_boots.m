@@ -1,6 +1,8 @@
-function fhs = pret_plot_boots(boots,model)
+function fhs = pret_plot_boots(boots,model,options)
 % pret_plot_boots(boots,model)
 % fhs = pret_plot_boots(boots,model)
+% fhs = pret_plot_boots(boots,model,options)
+% options = pret_plot_boots()
 % 
 % Plots box and whisker plots of each parameter that was estimated as part
 % of the bootstrapping procedure. Box shows median and 50% confidence
@@ -22,12 +24,29 @@ function fhs = pret_plot_boots(boots,model)
 % 
 %       fhs = figure array containing handles for every plot generated.
 % 
+%   Options:
+% 
+%       pret_model_check = options for pret_model_check
+% 
 % Jacob Parker 2018
 
 close all
 
+if nargin < 3
+    opts = pret_default_options();
+    options = opts.pret_plot_boots;
+    clear opts
+    if nargin < 1
+        fhs = options;
+        return
+    end
+end
+
+%OPTIONS
+pret_model_check_options = options.pret_model_check;
+
 %check input
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
 %boots vs model
 if any(boots.eventtimes ~= model.eventtimes) || any(boots.window ~= model.window) || boots.samplerate ~= model.samplerate || length(boots.boxtimes) ~= length(model.boxtimes)

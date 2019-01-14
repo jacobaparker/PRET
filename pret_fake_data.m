@@ -64,6 +64,8 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 %       which pret_fake_data uses to generate parameter values that the
 %       artificial time series are constructed from. Options for the
 %       various "parammode" options are in here.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -79,9 +81,10 @@ end
 
 %OPTIONS
 pret_generate_params_options = options.pret_generate_params;
+pret_model_check_options = options.pret_model_check;
 
 %check inputs
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
 sfact = samplerate/1000;
 time = trialwindow(1):1/sfact:trialwindow(2);

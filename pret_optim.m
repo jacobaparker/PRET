@@ -73,6 +73,8 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 % 
 %       A, B, Aeq, Beq, NONLCON, fmincon_options = optional input arguments
 %       into fmincon. See documentation for fmincon for more details.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -89,6 +91,7 @@ end
 %OPTIONS
 optimplotflag = options.optimplotflag;
 pret_cost_options = options.pret_cost;
+pret_model_check_options = options.pret_model_check;
 
 %Factors to scale parameters by so that they are of a similar magnitude.
 %Improves performance of the constrained optimization algorithm (fmincon)
@@ -112,7 +115,7 @@ sfact = samplerate/1000;
 time = trialwindow(1):1/sfact:trialwindow(2);
 
 %check inputs
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
 %data is a vector
 if size(data,1) ~= 1
@@ -143,7 +146,6 @@ data = data(datalb:dataub);
 time = model.window(1):1/sfact:model.window(2);
 
 %construct inputs into fmincon (X, bounds, etc)
-%MAKE SURE WORKS WITH CURRENT MODEL STRUCTURE
 X=[]; lb=[]; ub=[]; numparams = 0;
 
 if model.ampflag

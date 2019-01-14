@@ -49,6 +49,8 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 % 
 %       savefile = if saveflag true, save .mat file to this dir (include
 %       name of course)
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -66,14 +68,15 @@ end
 pret_estimate_options = options.pret_estimate;
 saveflag = options.saveflag;
 savefile = options.savefile;
+pret_model_check_options = options.pret_model_check;
 
-%check model
+%check models
 for mm = 1:length(model)
     try
-        pret_model_check(model(mm))
+        pret_model_check(model(mm),pret_model_check_options)
     catch
         fprintf('\nError in model %d\n',mm)
-        pret_model_check(model(mm))
+        pret_model_check(model(mm),pret_model_check_options)
     end
 end
 

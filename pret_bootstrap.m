@@ -74,6 +74,8 @@ function [boots, bootestims] = pret_bootstrap(data,samplerate,trialwindow,model,
 % 
 %       pret_estimate_options = options structure for pret_estimate, 
 %       which pret_bootstrap uses to perform each bootstrap iteration.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -90,13 +92,14 @@ end
 %OPTIONS
 bootplotflag = options.bootplotflag;
 pret_estimate_options = options.pret_estimate;
+pret_model_check_options = options.pret_model_check;
 
 sfact = samplerate/1000;
 time = trialwindow(1):1/sfact:trialwindow(2);
 
 %check inputs
 %simple check of input model structure
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
 %samplerate, trialwindow vs data
 if length(time) ~= size(data,2)

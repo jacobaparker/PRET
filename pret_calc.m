@@ -32,6 +32,8 @@ function [Ycalc, X] = pret_calc(model,options)
 %       n = parameter used to generate pupil response function. Canonical
 %       value of 10.1 is the default. See the function "pupilrf" and 
 %       Hoeks&Levelt 1993 for more information.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -47,13 +49,14 @@ end
 
 %OPTIONS
 n = options.n;
+pret_model_check_options = options.pret_model_check;
 
 %check inputs
 if ~isfield(model,'ampflag')
-    fprintf('Input "model" does not appear to be a model structure, assuming it is an optim/estim structure\n')
+    fprintf('Treating input "model" as an optim/estim structure\n')
     optim_check(model)
 else
-    pret_model_check(model)
+    pret_model_check(model,pret_model_check_options)
 end
 
 sfact = model.samplerate/1000;
