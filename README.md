@@ -23,6 +23,7 @@ __Pupil Response Estimation Toolbox (PRET)__
 Function | Description
 ---------|------------
 blinkinterp.m | performs blink interpolation as described in Mathôt 2013[3]
+pret_batch_process.m | performs the estimation and/or bootstrapping procedure on more than one subject
 pret_bootstrap.m | performs the bootstrapping procedure on one set of trials with one model
 pret_bootstrap_sj.m | performs the bootstrapping procedure on data in an "sj" structure with one or more models
 pret_calc.m | calculates the individual pupil reponse regressors and the predicted time series
