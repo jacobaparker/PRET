@@ -94,3 +94,6 @@ options.pret_batch_process.estflag = true;
 options.pret_batch_process.pret_estimate_sj = options.pret_estimate_sj;
 options.pret_batch_process.bootflag = true;
 options.pret_batch_process.pret_bootstrap_sj = options.pret_bootstrap_sj;
+
+%% pret_model_check
+options.pret_model_check.warnflag = true;

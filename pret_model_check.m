@@ -5,6 +5,21 @@ function pret_model_check(model)
 % Checks if the specifications in "model" are valid. If a model is not
 % valid, will throw an error. Otherwise, if a model is valid, no error will
 % be thrown.
+% 
+% Options:
+% 
+%   warnflag: (true/false) = display warnings? (default true)
+%       *may be useful to set to false if your model specifications elicit a
+%       warning and you are running many estimation/boostrap iterations
+
+if nargin < 2
+    opts = pret_default_options();
+    options = opts.pret_model_check;
+    clear opts
+end
+
+%OPTIONS
+warnflag = options.warnflag;
 
 %% window
 if length(model.window) ~= 2
@@ -43,7 +58,7 @@ if model.ampflag
                 error('At least one given amplitude value in model.ampvals is outside of its\nbounds according to the info in model.ampbounds')
             end
         end
-        if length(model.eventtimes) ~= length(model.ampvals)
+        if length(model.eventtimes) ~= length(model.ampvals) && warnflag
             warning('\nNumber of default event amplitude values does not match number of events\nDisregard if you do not plan on using functions that explicitly require amplitude values\n')
         end
     end
@@ -78,7 +93,7 @@ if model.boxampflag
                 error('At least one given box amplitude value in model.boxampvals is outside of its\nbounds according to the info in model.boxampbounds')
             end
         end
-        if length(model.boxtimes) ~= length(model.boxampvals)
+        if length(model.boxtimes) ~= length(model.boxampvals) && warnflag
             warning('\nNumber of default box amplitude values does not match number of boxes\nDisregard if you do not plan on using functions that explicitly require amplitude values\n')
         end
     end
@@ -99,7 +114,7 @@ if model.latflag
                 error('At least one given latency value in model.latvals is outside of its\nbounds according to the info in model.latbounds')
             end
         end
-        if length(model.eventtimes) ~= length(model.latvals)
+        if length(model.eventtimes) ~= length(model.latvals) && warnflag
             warning('\nNumber of default event latency values does not match number of events\nDisregard if you do not plan on using functions that explicitly require latency values\n')
         end
     end
@@ -117,7 +132,7 @@ if model.tmaxflag
     if (model.tmaxval < model.tmaxbounds(1)) || (model.tmaxval > model.tmaxbounds(2))
         error('Given tmax value in model.tmaxval is outside of its\nbounds according to the info in model.tmaxbounds')
     end
-    if length(model.tmaxval) ~= 1
+    if length(model.tmaxval) ~= 1 && warnflag
         warning('\nNumber of default tmax values not equal to 1\nDisregard if you do not plan on using functions that explicitly require tmax value\n')
     end
 else
@@ -134,7 +149,7 @@ if model.yintflag
     if (model.yintval < model.yintbounds(1)) || (model.yintval > model.yintbounds(2))
         error('Given yint value in model.yintval is outside of its\nbounds according to the info in model.yintbounds')
     end
-    if length(model.yintval) ~= 1
+    if length(model.yintval) ~= 1 && warnflag
         warning('\nNumber of default y-intercept values not equal to 1\nDisregard if you do not plan on using functions that explicitly require y-intercept value\n')
     end
 else
@@ -151,7 +166,7 @@ if model.slopeflag
     if (model.slopeval < model.slopebounds(1)) || (model.slopeval > model.slopebounds(2))
         error('Given slope value in model.slopeval is outside of its\nbounds according to the info in model.slopebounds')
     end
-    if length(model.slopeval) ~= 1
+    if length(model.slopeval) ~= 1 && warnflag
         warning('\nNumber of default slope values not equal to 1\nDisregard if you do not plan on using functions that explicitly require slope value\n')
     end
 else
