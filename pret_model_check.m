@@ -83,7 +83,7 @@ if ~isempty(model.boxtimes)
             error('All cells in boxtimes must be a 2 element vector')
         end
         if ~(any(model.boxtimes{ii}(1) == time)) || ~(any(model.boxtimes{ii}(2) == time))
-            if (rem(model.boxtimes{ii}(2)-time(end),1/sfact) ~= 0) || (rem(model.boxtimes{ii}(1)-time(1),1/sfact)) ~= 0
+            if (rem(model.boxtimes{ii}(2)-time(end),1/sfact) == 0) && (rem(model.boxtimes{ii}(1)-time(1),1/sfact) == 0)
                 % box times can fall outside model.window, but must be on
                 % the time vector if it were to be extended
             else
