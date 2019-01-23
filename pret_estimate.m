@@ -1,7 +1,7 @@
-function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model,wnum,options)
+function [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,trialwindow,model,wnum,options)
 % pret_estimate
-% [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model)
-% [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model,options)
+% [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,trialwindow,model)
+% [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,trialwindow,model,options)
 % options = pret_estimate()
 % 
 % Optimization algorithm for estimating the model parameters that result in
@@ -24,8 +24,9 @@ function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model
 % 
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval do not need to be provided if they
-%       are being estimated but should be provided if they are not being estimated.
+%       model.tmaxval, model.yintval, and model.slopeval do not need to be 
+%       provided if they are being estimated but should be provided if they 
+%       are not.
 % 
 %       wnum = number of workers used by matlab's parallel pool to complete
 %       the process (parpool will not be initialized if set to 1).
@@ -47,11 +48,17 @@ function [estim, searchoptims] = pret_estimate(data,samplerate,trialwindow,model
 %           latvals = the estimated event latency values.
 %           tmaxval = the estimated tmax value.
 %           yintval = the estimated y-intercept value.
+%           slopeval = the estimated slope value.
 %           numparams = number of parameters fit.
 %           cost = the sum of square errors between the optimized
 %           parameters and the actual data.
 %           R2 = the R^2 goodness of fit value
-%           BIC %%%%% RD: add?
+%           BICrel = the relative BIC value of the model fit
+%               *relative because we use the guassian simplfictation of the
+%               BIC
+%               *since it is relative, only use to compare models/fits on
+%               data from the same task
+% 
 %       *Note - can be input into pret_plot_model, pret_calc, or pret_cost in the 
 %       place of the "model" input*
 % 
@@ -134,7 +141,7 @@ if ~(any(model.window(1) == time)) || ~(any(model.window(2) == time ))
 end
 
 %generate starting parameters for coarse search in parameter space
-params = pret_generate_params(searchnum,parammode,model,pret_generate_params_options);
+searchpoints = pret_generate_params(searchnum,parammode,model,pret_generate_params_options);
 
 %crop data to match model.window
 datalb = find(model.window(1) == time);
@@ -145,7 +152,7 @@ data = data(datalb:dataub);
 %space to determine which starting points to use for constrained
 %optimization, which is time consuming and computationally intensive 
 fprintf('\nDetermining best %d out of %d starting points for optimization algorithm\n',optimnum,searchnum)
-search = search_param_space(data,searchnum,optimnum,model,params,pret_cost_options);
+search = search_param_space(data,searchnum,optimnum,model,searchpoints,pret_cost_options);
 fprintf('Best %d starting points found\n',optimnum)
 
 %create a model structure for each optimization to be completed (enables
@@ -163,7 +170,7 @@ end
 
 %perform constrained optimization on the best points from the coarse
 %parameter space search
-searchoptims = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'slopeval',[],'numparams',[],'cost',[],'R2',[],'BIC',[]);
+searchoptims = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'slopeval',[],'numparams',[],'cost',[],'R2',[],'BICrel',[]);
 tempcosts = nan(optimnum,1);
 if wnum == 1
     fprintf('\nBeginning optimization of best starting points\nOptims completed: ')
@@ -185,7 +192,7 @@ else
     end
 end
 
-fprintf('\nOptimizations completed!\n')
+fprintf('\nOptimizations completed!\n\n')
 [~,minind] = min(tempcosts);
 estim = searchoptims(minind);
 

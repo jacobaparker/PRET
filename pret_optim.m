@@ -23,8 +23,8 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 % 
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval MUST be provided. These values are
-%       the starting point for the optimization.
+%       model.tmaxval, model.yintval, and model.slopeval MUST be provided. 
+%       These values are the starting point for the optimization.
 % 
 %       options = options structure for pret_optim. Default options can be
 %       returned by calling this function with no arguments.
@@ -47,7 +47,12 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 %           cost = the sum of square errors between the optimized
 %           parameters and the actual data.
 %           R2 = the R^2 goodness of fit value.
-%           %%% RD: add BIC?
+%           BICrel = the relative BIC value of the model fit
+%               *relative because we use the guassian simplfictation of the
+%               BIC
+%               *since it is relative, only use to compare models/fits on
+%               data from the same task
+% 
 %       *Note - can be input into pret_plot_model and pret_calc in the 
 %       place of the "model" input*
 % 
@@ -69,10 +74,13 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 % 
 %       tmaxfact (1/1000) = scaling factor for the tmax parameter.
 % 
-%       yintfact (10) = scaling factor fo the yint parameter.
+%       yintfact (10) = scaling factor for the yint parameter.
 % 
-%       A, B, Aeq, Beq, NONLCON, fmincon_options = optional input arguments
-%       into fmincon. See documentation for fmincon for more details.
+%       slopefact (10000) = scaling factor for the slope parameter.
+% 
+%       fmincon.
+%           A, B, Aeq, Beq, NONLCON, options = input arguments/options
+%           for fmincon. See documentation for fmincon for more details.
 % 
 %       pret_model_check = options for pret_model_check
 %
@@ -103,12 +111,12 @@ yintfact = options.yintfact;
 slopefact = options.slopefact;
 
 %input values/options for fmincon
-A = options.A;
-B = options.B;
-Aeq = options.Aeq;
-Beq = options.Beq;
-NONLCON = options.NONLCON;
-fmincon_options = options.fmincon_options;
+A = options.fmincon.A;
+B = options.fmincon.B;
+Aeq = options.fmincon.Aeq;
+Beq = options.fmincon.Beq;
+NONLCON = options.fmincon.NONLCON;
+fmincon_options = options.fmincon.options;
 
 modelstate = model;
 sfact = samplerate/1000;
@@ -206,7 +214,7 @@ optim = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'sample
 optim.numparams = numparams;
 optim.cost = cost;
 optim.R2 = 1 - (cost/SSt);
-optim.BIC = (length(data) * log(cost/length(data))) + (numparams *log(length(data)));
+optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(data)));
 
     function cost = optim_cost(X,data,modelstate)
         modelstate = unloadX(X,modelstate);
@@ -219,13 +227,14 @@ optim.BIC = (length(data) * log(cost/length(data))) + (numparams *log(length(dat
             case 'iter'
                 clf
                 modelstate = unloadX(X,modelstate);
-                plot(time,data,'k','LineWidth',1.5)
-                pret_plot_model(modelstate);
+                gobj1 = plot(time,data,'k','LineWidth',1.5);
+                [~, gobj2] = pret_plot_model(modelstate);
+                legend([gobj1 gobj2],{'data' 'model'})
                 yl = ylim;
                 xl = xlim;
                 R2 = 1 - (optimValues.fval/SSt);
-                text((xl(2)-xl(1))*.1,yl(2)*.95,['Evals: ' num2str(optimValues.funccount)],'HorizontalAlignment','center','BackgroundColor',[0.7 0.7 0.7]);
-                text((xl(2)-xl(1))*.1,yl(2)*.85,['R^2: ' num2str(R2)],'HorizontalAlignment','center','BackgroundColor',[0.7 0.7 0.7]);
+                text((xl(2)-xl(1))*.1+xl(1),yl(2)*.95,['Evals: ' num2str(optimValues.funccount)],'HorizontalAlignment','center','BackgroundColor',[0.7 0.7 0.7]);
+                text((xl(2)-xl(1))*.1+xl(1),yl(2)*.85,['R^2: ' num2str(R2)],'HorizontalAlignment','center','BackgroundColor',[0.7 0.7 0.7]);
                 pause(0.04)
             case 'interrupt'
                 % No actions here

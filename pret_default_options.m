@@ -43,13 +43,14 @@ options.pret_optim.pret_model_check = options.pret_model_check;
 options.pret_optim.pret_model_check.checkparams = true;
 
 %input values/options for fmincon
-options.pret_optim.A = [];
-options.pret_optim.B = [];
-options.pret_optim.Aeq = [];
-options.pret_optim.Beq = [];
-options.pret_optim.NONLCON = [];
-options.pret_optim.fmincon_options = fmincon('defaults');
-options.pret_optim.fmincon_options.Display = 'off';
+options.pret_optim.fmincon = [];
+options.pret_optim.fmincon.A = [];
+options.pret_optim.fmincon.B = [];
+options.pret_optim.fmincon.Aeq = [];
+options.pret_optim.fmincon.Beq = [];
+options.pret_optim.fmincon.NONLCON = [];
+options.pret_optim.fmincon.options = fmincon('defaults');
+options.pret_optim.fmincon.options.Display = 'off';
 
 %% pret_generate_params
 options.pret_generate_params.nbins = 50;
@@ -113,4 +114,4 @@ options.pret_batch_process.pret_model_check = options.pret_model_check;
 
 %% pret_plot_boots
 options.pret_plot_boots.pret_model_check = options.pret_model_check;
-options.pret_plot_boots.pret_model_check.checkparams = true;
+options.pret_plot_boots.pret_model_check.checkparams = false;

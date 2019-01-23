@@ -11,7 +11,7 @@ function [Ycalc, X] = pret_calc(model,options)
 %   
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval must be provided.
+%       model.tmaxval, model.yintval, and model.slopeval must be provided.
 %           *Note - an optim/estim structure from pret_estimate, pret_bootstrap, or
 %           pret_optim can be input in the place of model*
 % 

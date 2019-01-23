@@ -61,7 +61,7 @@ if model.ampflag
         end
         if checkparams
             if length(model.eventtimes) ~= length(model.ampvals)
-                error('Number of defualt event amplitudes not equal to number of events')
+                error('Number of default event amplitudes not equal to number of events')
             end
             for ii = 1:length(model.eventtimes)
                 if (model.ampvals(ii) < model.ampbounds(1,ii)) || (model.ampvals(ii) > model.ampbounds(2,ii))
@@ -110,7 +110,7 @@ if model.boxampflag
     end
 else
     if length(model.boxtimes) ~= length(model.boxampvals)
-        error('Number of defualt box amplitudes not equal to number of boxes')
+        error('Number of default box amplitudes not equal to number of boxes')
     end
 end
 
@@ -133,7 +133,7 @@ if model.latflag
     end
 else
     if length(model.eventtimes) ~= length(model.latvals)
-        error('Number of defualt event latency not equal to number of events')
+        error('Number of default event latency not equal to number of events')
     end
 end
 

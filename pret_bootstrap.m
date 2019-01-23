@@ -20,8 +20,8 @@ function [boots, bootestims] = pret_bootstrap(data,samplerate,trialwindow,model,
 % 
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval do NOT need to be provided (unless
-%       any of those parameters are not being estimated).
+%       model.tmaxval, model.yintval, and model.slopeval do NOT need to be 
+%       provided (unless any of those parameters are not being estimated).
 % 
 %       nboots = number of bootstrap iterations to perform.
 % 
@@ -46,20 +46,26 @@ function [boots, bootestims] = pret_bootstrap(data,samplerate,trialwindow,model,
 %           iteration and the second dimension is event.
 %           boxampvals = the estimated box regressor amplitude values.
 %           latvals = the estimated event latency values.
-%           tmaxval = the estimated tmax values.
-%           yintval = the estimated y-intercept values.
+%           tmaxvals = the estimated tmax values.
+%           yintvals = the estimated y-intercept values.
+%           slopevals = the estimated slope values
 % 
 %           cost = the sum of square errors between the optimized
 %           parameters and the actual data.
 %           R2 = the R^2 goodness of fit value.
+%           BICrel = the relative BIC value of the model fit
+%               *relative because we use the guassian simplfictation of the
+%               BIC
+%               *since it is relative, only use to compare models/fits on
+%               data from the same task
 % 
-%           ampmedians, boxampmedians, latmedians, tmaxmedian, yintmedian =
-%           the medians of ampvals, boxampvals, latvals, tmaxvals, and
-%           yintvals respectively.
+%           ampmedians, boxampmedians, latmedians, tmaxmedian, yintmedian, slopemedian =
+%           the medians of ampvals, boxampvals, latvals, tmaxvals, yintvals, 
+%           and slopevals respectively.
 % 
-%           amp95CIs, boxamp95CIs, lat95CIs, tmax95CI, yint95CI = the 95%
-%           confidence intervals of ampvals, boxampvals, latvals, tmaxvals,
-%           and yintvals respectively.
+%           amp95CIs, boxamp95CIs, lat95CIs, tmax95CI, yint95CI, slope95CI = 
+%           the 95 confidence intervals of ampvals, boxampvals, latvals, 
+%           tmaxvals, yintvals, and slopevals respectively.
 % 
 %       bootestims = an optional output option. A structure with a length
 %       of nboots, where each element is an estim structure output by
@@ -125,7 +131,7 @@ data = data(:,datalb:dataub);
 rng(0)
 means = bootstrp(nboots,@nanmean,data);
 
-bootestims = struct('eventtimes',model.eventtimes,'boxtimes',model.boxtimes,'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'slopeval',[],'numparams',[],'cost',[],'R2',[],'BIC',[]);
+bootestims = struct('eventtimes',model.eventtimes,'boxtimes',model.boxtimes,'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'slopeval',[],'numparams',[],'cost',[],'R2',[],'BICrel',[]);
 modelsamplerate = model.samplerate;
 modelwindow = model.window;
 

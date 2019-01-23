@@ -22,10 +22,6 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 %           'normal' - parameters are drawn from a normal distrubtion
 %           centered around the values provided in the input model
 %           structure. The standard deviation is set by options.sigma.
-%       *'space_optimal' option coming soon that finds the "num" number of 
-%       parameter points that cover parameter space as uniformly possible.
-%       %%% RD: if space_optimal is not yet implemented, may want to remove
-%       the info about it from the help for the first release.
 % 
 %       samplerate = sampling rate of data in Hz. Can be different than the
 %       value in the model.samplerate if desired.
@@ -36,8 +32,8 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 % 
 %       model = model structure created by pret_model and filled in by user.
 %           *IMPORTANT - parameter values in model.ampvals,
-%           model.boxampvals, model.latvals, model.tmaxval, and
-%           model.yintval must be provided if 'normal' parammode is used!
+%           model.boxampvals, model.latvals, model.tmaxval, model.yintval, 
+%           and model.slopeval must be provided if 'normal' parammode is used!
 % 
 %       options = options structure for pret_fake_data. Default options 
 %       can be returned by calling this function with no arguments, or see
@@ -56,6 +52,7 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 %           latvals = 2D matrix of generated event latency parameters.
 %           tmaxvals = column vector of generated tmax parameters.
 %           yintvals = column vector of generated y-intercept parameters.
+%           slopevals = column vector of generated slope parameters.
 %           
 % 
 %   Options
