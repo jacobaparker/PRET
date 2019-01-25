@@ -24,11 +24,10 @@ taskmodel.samplerate = 1000;
  
 % Now let's suppose the trial sequence of this task is the following:
 % 
-%   A precue informs the observer that the trial has begun (and presumably
-%   something else), the observer sees 2 stimuli 1000 and 1250 ms after the
-%   precue, then a postcue 500 ms after the last stimulus informs the
-%   observer to respond in a particular way. For the sake of simplicity,
-%   let's say the observer always responds 1000 ms after the postcue.
+%   A precue informs the observer that the trial has begun, the observer 
+%   sees 2 stimuli 1000 and 1250 ms after the
+%   precue, then a postcue 500 ms after the last stimulus instructs the
+%   observer to respond. 
 % 
 % From this, we have 4 events; precue, stimulus 1, stimulus 2, postcue.
 % Let's say the precue is time 0 ms, then these events occur at 0 ms, 1000
@@ -36,8 +35,9 @@ taskmodel.samplerate = 1000;
 taskmodel.eventtimes = [0 1000 1250 1750];
 taskmodel.eventlabels = {'precue' 'stim1' 'stim2' 'postcue'}; %optional
 
-% We also have a response that is always occuring at 2750 ms after the
-% precue. Let's assume that there's a constant internal signal
+% We also have a response at the end of the trial. For the sake of 
+% simplicity, let's say the observer always responds 1000 ms after the 
+% postcue. Let's assume that there's a constant internal signal
 % due to the cognitive workload associated with completing the task
 % and making the decision. This constant internal signal would start at
 % precue onset (0 ms) and last until time of response (2750 ms). In the
@@ -68,9 +68,9 @@ taskmodel.yintval = 0;
 taskmodel.slopeval = 0;
 
 % Let's define boundaries for the parameters we will be fitting. Let's say
-% event and box-related amplitudes will all be between 0 and 100, event
-% latencies will be between -500 and 500 ms, and tmax will be between 500
-% and 1500.
+% event and box-related amplitudes will all be between 0 and 100 (percent 
+% signal change from baseline), event latencies will be between -500 and 
+% 500 ms, and tmax will be between 500 and 1500.
 taskmodel.ampbounds = repmat([0;100],1,length(taskmodel.eventtimes));
 taskmodel.latbounds = repmat([-500;500],1,length(taskmodel.eventtimes));
 taskmodel.boxampbounds = [0;100];
@@ -78,6 +78,11 @@ taskmodel.tmaxbounds = [500;1500];
 
 % We would need values for these parameters to generate data, but we are
 % actually going to create 3 conditions with differing parameters first.
+%%%%% RD (alternative):
+% So far, the model's specifications are common to all task conditions. Now
+% let's define different models for each condition so that we can
+% generate artificial data for each one. This is to simulate data that you
+% might obtain in an experiment with three conditions.
 
 %% Generate data
 % Let's suppose our subject completed 3 different conditions.
@@ -139,8 +144,13 @@ xlabel('time (ms)')
 ylabel('pupil size (proportion change from baseline')
 
 %% organize data via pret_preprocess
-% data is already baseline normalized and has no blinks, so we
-% return the options structure and turn off those features
+% To fit pupil data you collected in an experiment, you would start here,
+% with preprocessing. The data should be epoched by trial in a matrix of
+% trials x time for each condition. pret_preprocess creates an sj
+% (subject) structure with the data and metadata in a set format.
+
+% The artificial data is already baseline normalized and has no blinks, so 
+% we return the options structure and turn off those features
 options = pret_preprocess();
 options.normflag = false;
 options.blinkflag = false;
@@ -151,15 +161,19 @@ data = {condition1data condition2data condition3data};
 % labels for each condition
 condlabels = {'condition1' 'condition2' 'condition3'};
 
-sj = pret_preprocess(data,taskmodel.samplerate,taskmodel.window,condlabels,[],options);
+% other epoch info
+samplerate = taskmodel.samplerate;
+window = taskmodel.window;
+
+sj = pret_preprocess(data,samplerate,window,condlabels,[],options);
 
 %% create model for the data
 % Pretending that we are naive of the model that we used to create our
 % data, let's create a model to actually fit the data to.
 model = pret_model();
 
-% While the trial window of our task is from -500 to 3500 ms, we are
-% probably not interested in what's happening before 0. In other words,
+% While the trial window of our task is from -500 to 3500 ms, here we are
+% not interested in what's happening before 0. In other words,
 % let's set the model window to only look at the region betweeen 0 and 3500
 % ms (the cost function will only be evaluated along this interval).
 model.window = [0 3500];
