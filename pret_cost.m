@@ -2,6 +2,7 @@ function cost = pret_cost(data,samplerate,trialwindow,model,options)
 % pret_cost
 % cost = pret_cost(data,samplerate,trialwindow,model)
 % cost = pret_cost(data,samplerate,trialwindow,model,options)
+% options = pret_cost()
 % 
 % Calculates the sum of the square errors between some input pupil size
 % time series "data" and a time series created from the specifications and

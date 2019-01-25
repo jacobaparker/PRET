@@ -147,7 +147,7 @@ fprintf('Best %d starting points found\n',optimnum)
 
 %create a model structure for each optimization to be completed (enables
 %use of parfor loop)
-modelstate(optimnum) = model;
+modelstate(optimnum) = model; %%% RD: is this redundant with line 152?
 for op = 1:optimnum
     modelstate(op) = model;
     modelstate(op).ampvals = search.ampvals(op,:);
@@ -200,7 +200,7 @@ estim = searchoptims(minind);
         end
         
         [~,sortind] = sort(costs);
-        [~,rank] = sort(sortind);
+        [~,rank] = sort(sortind); %%% RD: Is rank ever different from sortind?
         optimindex = find(rank <= optimnum);
         
         search.ampvals = params.ampvals(optimindex,:);

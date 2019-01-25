@@ -3,6 +3,7 @@ function [Ycalc, X] = pret_calc(model,options)
 % [Ycalc, X] = pret_calc(model)
 % [Ycalc, X] = pret_calc(model,options)
 % [Ycalc, X] = pret_calc(optim,options)
+% options = pret_calc()
 % 
 % Calculates the time series and its constituent regresssors resulting from the 
 % model parameters and specifications in the given model structure.
@@ -23,7 +24,7 @@ function [Ycalc, X] = pret_calc(model,options)
 %       Ycalc = time series created using the parameters and specifications
 %       provided in the model input.
 % 
-%       X = 2D matrix of regressors summed together and with the
+%       X = 2D matrix of regressors that are summed together and with the
 %       y-intercept parameter to create Ycalc. 1st dimension is regressor
 %       and 2nd dimension is time.
 % 
