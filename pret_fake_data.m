@@ -22,10 +22,6 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 %           'normal' - parameters are drawn from a normal distrubtion
 %           centered around the values provided in the input model
 %           structure. The standard deviation is set by options.sigma.
-%       *'space_optimal' option coming soon that finds the "num" number of 
-%       parameter points that cover parameter space as uniformly possible.
-%       %%% RD: if space_optimal is not yet implemented, may want to remove
-%       the info about it from the help for the first release.
 % 
 %       samplerate = sampling rate of data in Hz. Can be different than the
 %       value in the model.samplerate if desired.
@@ -36,8 +32,8 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 % 
 %       model = model structure created by pret_model and filled in by user.
 %           *IMPORTANT - parameter values in model.ampvals,
-%           model.boxampvals, model.latvals, model.tmaxval, and
-%           model.yintval must be provided if 'normal' parammode is used!
+%           model.boxampvals, model.latvals, model.tmaxval, model.yintval, 
+%           and model.slopeval must be provided if 'normal' parammode is used!
 % 
 %       options = options structure for pret_fake_data. Default options 
 %       can be returned by calling this function with no arguments, or see
@@ -56,6 +52,7 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 %           latvals = 2D matrix of generated event latency parameters.
 %           tmaxvals = column vector of generated tmax parameters.
 %           yintvals = column vector of generated y-intercept parameters.
+%           slopevals = column vector of generated slope parameters.
 %           
 % 
 %   Options
@@ -64,6 +61,8 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 %       which pret_fake_data uses to generate parameter values that the
 %       artificial time series are constructed from. Options for the
 %       various "parammode" options are in here.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -79,9 +78,10 @@ end
 
 %OPTIONS
 pret_generate_params_options = options.pret_generate_params;
+pret_model_check_options = options.pret_model_check;
 
 %check inputs
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
 sfact = samplerate/1000;
 time = trialwindow(1):1/sfact:trialwindow(2);

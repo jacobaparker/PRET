@@ -22,15 +22,11 @@ function params = pret_generate_params(num,parammode,model,options)
 %           'normal' - parameters are drawn from a normal distrubtion
 %           centered around the values provided in the input model
 %           structure. The standard deviation is set by options.sigma.
-%       *'space_optimal' option coming soon that finds the "num" number of 
-%       parameter points that cover parameter space as uniformly possible.
-%       %%% RD: if space_optimal is not yet implemented, may want to remove
-%       the info about it from the help for the first release.
 % 
 %       model = model structure created by pret_model and filled in by user.
 %           *IMPORTANT - parameter values in model.ampvals,
-%           model.boxampvals, model.latvals, model.tmaxval, and
-%           model.yintval must be provided if 'normal' parammode is used!
+%           model.boxampvals, model.latvals, model.tmaxval, model.yintval, 
+%           and model.slopeval must be provided if 'normal' parammode is used!
 % 
 %       options = options structure for pret_generate_params. Default options 
 %       can be returned by calling this function with no arguments, or see
@@ -46,6 +42,7 @@ function params = pret_generate_params(num,parammode,model,options)
 %           latvals = 2D matrix of generated event latency parameters.
 %           tmaxvals = column vector of generated tmax parameters.
 %           yintvals = column vector of generated y-intercept parameters.
+%           slopevals = column vector of generated slope parameters.
 %           
 % 
 %   Options
@@ -55,12 +52,17 @@ function params = pret_generate_params(num,parammode,model,options)
 % 
 %       sigma (0.05) = if 'normal' parammode is used, specifies the standard
 %       deviation of the normal distribution each parameter is drawn from.
+%       This standard deviation is applied differentially to each parameter
+%       using their respective scaling factors (below).
 % 
 %       ampfact (1/10), boxampfact (1/10), latfact (1/1000), tmaxfact (1/1000), 
-%       and yintfact (10) = if 'space_optimal' parammode is used, these options specify
-%       the scaling factors for amplitude, latency, tmax, and y-intercept
-%       parameters respectively. This is necessary because fmincon is used
-%       to determine the optimal sets of parameters.
+%       yintfact (10), slopefact (10000) = if 'normal' parammode is used, 
+%       these options specify the scaling factors for amplitude, latency, 
+%       tmax, y-intercept, and slope parameters respectively. This is
+%       necessary to apply a single sigma value to different parameters
+%       that have varying orders of magntitude.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -83,11 +85,14 @@ latfact = options.latfact;
 tmaxfact = options.tmaxfact;
 yintfact = options.yintfact;
 slopefact = options.slopefact;
+pret_model_check_options = options.pret_model_check;
 
 %check inputs
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
-%%% RD: check that num input is valid (integer >0)
+if ~((round(num) == num) && num > 0)
+    error('Input "num" must be positive integer')
+end
 
 %set random number generator
 rng(0)

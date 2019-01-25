@@ -1,6 +1,8 @@
-function fhs = pret_plot_boots(boots,model)
+function fhs = pret_plot_boots(boots,model,options)
 % pret_plot_boots(boots,model)
 % fhs = pret_plot_boots(boots,model)
+% fhs = pret_plot_boots(boots,model,options)
+% options = pret_plot_boots()
 % 
 % Plots box and whisker plots of each parameter that was estimated as part
 % of the bootstrapping procedure. Box shows median and 50% confidence
@@ -16,18 +18,36 @@ function fhs = pret_plot_boots(boots,model)
 % 
 %       model = model structure created by pa_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval do NOT need to be provided.
+%       model.tmaxval, model.yintval, and model.slopeval do NOT need to be 
+%       provided.
 % 
 %   Outputs:
 % 
 %       fhs = figure array containing handles for every plot generated.
 % 
+%   Options:
+% 
+%       pret_model_check = options for pret_model_check
+% 
 % Jacob Parker 2018
 
 close all
 
+if nargin < 3
+    opts = pret_default_options();
+    options = opts.pret_plot_boots;
+    clear opts
+    if nargin < 1
+        fhs = options;
+        return
+    end
+end
+
+%OPTIONS
+pret_model_check_options = options.pret_model_check;
+
 %check input
-pret_model_check(model)
+pret_model_check(model,pret_model_check_options)
 
 %boots vs model
 if any(boots.eventtimes ~= model.eventtimes) || any(boots.window ~= model.window) || boots.samplerate ~= model.samplerate || length(boots.boxtimes) ~= length(model.boxtimes)
@@ -42,6 +62,16 @@ end
 
 fhs = gobjects(0);
 
+if length(model.eventtimes) ~= length(model.eventlabels)
+    fprintf('Number of event labels not equal to number of events.\nUsing generic labels instead\n')
+    model.eventtimes = num2cell(1:length(model.eventtimes));
+end
+
+if length(model.boxtimes) ~= length(model.boxlabels)
+    fprintf('Number of box labels not equal to number of boxes.\nUsing generic labels instead\n')
+    model.boxtimes = num2cell(1:length(model.boxtimes));
+end
+
 if model.ampflag
     
     %amplitude plot
@@ -54,11 +84,8 @@ if model.ampflag
     end
     set(gca,'FontSize',12)
     set(gca,'XTick',1:length(boots.eventtimes))
-%     xticks(1:length(boots.eventtimes))
     set(gca,'XTickLabel',model.eventlabels)
-%     xticklabels(model.eventlabels)
     set(gca,'XTickLabelRotation',45)
-%     xtickangle(45)
     xlabel('Event','FontSize',16)
     ylabel('Amplitude (% change from baseline)','FontSize',16)
     title('Event Amplitude Bootstrap Estimates','FontSize',16)
@@ -77,11 +104,8 @@ if model.latflag
     end
     set(gca,'FontSize',12)
     set(gca,'XTick',1:length(boots.eventtimes))
-%     xticks(1:length(boots.eventtimes))
     set(gca,'XTickLabel',model.eventlabels)
-%     xticklabels(model.eventlabels)
     set(gca,'XTickLabelRotation',45)
-%     xtickangle(45)
     xlabel('Event','FontSize',16)
     ylabel('Latency (ms)','FontSize',16)
     title('Event Latency Bootstrap Estimates','FontSize',16)
@@ -99,11 +123,8 @@ if model.boxampflag
     end
     set(gca,'FontSize',12)
     set(gca,'XTick',1:length(boots.boxtimes))
-%     xticks(1:length(boots.boxtimes))
     set(gca,'XTickLabel',model.boxlabels)
-%     xticklabels(model.boxlabels)
     set(gca,'XTickLabelRotation',45)
-%     xtickangle(45)
     xlabel('Event','FontSize',16)
     ylabel('Amplitude (% change from baseline)','FontSize',16)
     title('Box Amplitude Bootstrap Estimates','FontSize',16)
@@ -120,9 +141,7 @@ if model.tmaxflag
     boxwhisker(boots.tmaxvals,1)
     set(gca,'FontSize',12)
     set(gca,'XTick',1)
-%     xticks(1)
     set(gca,'XTickLabel',{'t_{max}'})
-%     xticklabels({'t_{max}'})
     ylabel('Time (ms)','FontSize',16)
     title('t_{max} Bootstrap Estimates','FontSize',16)
     
@@ -138,9 +157,7 @@ if model.yintflag
     boxwhisker(boots.yintvals,1)
     set(gca,'FontSize',12)
     set(gca,'XTick',1)
-%     xticks(1)
     set(gca,'XTickLabel',{'y-intercept'})
-%     xticklabels({'y-intercept'})
     ylabel('Amplitude (% change from baseline)','FontSize',16)
     title('y-intercept Bootstrap Estimates','FontSize',16)
 
@@ -156,9 +173,7 @@ if model.slopeflag
     boxwhisker(boots.slopevals,1)
     set(gca,'FontSize',12)
     set(gca,'XTick',1)
-%     xticks(1)
     set(gca,'XTickLabel',{'slope'})
-%     xticklabels({'y-intercept'})
     ylabel('Amplitude/time (% change/ms)','FontSize',16)
     title('slope Bootstrap Estimates','FontSize',16)
 

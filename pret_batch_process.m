@@ -13,8 +13,8 @@ function sjs = pret_batch_process(sjs,model,nboots,wnum,options)
 % 
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval do NOT need to be provided (unless
-%       any of those parameters are not being estimated).
+%       model.tmaxval, model.yintval, and model.slopeval do NOT need to be 
+%       provided (unless any of those parameters are not being estimated).
 %           *NOTE - if you want to fit multiple models, you can input an
 %           Nx1 structure with the same fields as "model", where N is the
 %           number of models and each element is a separate model
@@ -60,6 +60,8 @@ function sjs = pret_batch_process(sjs,model,nboots,wnum,options)
 %       pret_bootstrap_sj_options = options structure for pret_bootstrap_sj, 
 %       which pret_batch_process uses to perform the bootstrapping procedure for the
 %       data in each sj structure.
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -78,14 +80,15 @@ estflag = options.estflag;
 bootflag = options.bootflag;
 pret_estimate_sj_options = options.pret_estimate_sj;
 pret_bootstrap_sj_options = options.pret_bootstrap_sj;
+pret_model_check_options = options.pret_model_check;
 
-%check model
+%check models
 for mm = 1:length(model)
     try
-        pret_model_check(model(mm))
+        pret_model_check(model(mm),pret_model_check_options)
     catch
         fprintf('\nError in model %d\n',mm)
-        pret_model_check(model(mm))
+        pret_model_check(model(mm),pret_model_check_options)
     end
 end
 

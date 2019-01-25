@@ -13,8 +13,9 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 % 
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, and model.yintval do not need to be provided if they
-%       are being estimated but should be provided if they are not being estimated.
+%       model.tmaxval, model.yintval, and model.slopeval do not need to be 
+%       provided if they are being estimated but should be provided if they 
+%       are not being estimated.
 %           *NOTE - if you want to fit multiple models, you can input an
 %           Nx1 structure with the same fields as "model", where N is the
 %           number of models and each element is a separate model
@@ -49,6 +50,8 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 % 
 %       savefile = if saveflag true, save .mat file to this dir (include
 %       name of course)
+% 
+%       pret_model_check = options for pret_model_check
 %
 %   Jacob Parker 2018
 
@@ -66,14 +69,15 @@ end
 pret_estimate_options = options.pret_estimate;
 saveflag = options.saveflag;
 savefile = options.savefile;
+pret_model_check_options = options.pret_model_check;
 
-%check model
+%check models
 for mm = 1:length(model)
     try
-        pret_model_check(model(mm))
+        pret_model_check(model(mm),pret_model_check_options)
     catch
         fprintf('\nError in model %d\n',mm)
-        pret_model_check(model(mm))
+        pret_model_check(model(mm),pret_model_check_options)
     end
 end
 
