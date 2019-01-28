@@ -147,7 +147,9 @@ ylabel('pupil size (proportion change from baseline')
 % To fit pupil data you collected in an experiment, you would start here,
 % with preprocessing. The data should be epoched by trial in a matrix of
 % trials x time for each condition. pret_preprocess creates an sj
-% (subject) structure with the data and metadata in a set format.
+% (subject) structure with the data and metadata in a set format. If
+% requested, it also performs baseline normalization and blink 
+% interpolation on the trial data.
 
 % The artificial data is already baseline normalized and has no blinks, so 
 % we return the options structure and turn off those features
@@ -168,30 +170,31 @@ window = taskmodel.window;
 sj = pret_preprocess(data,samplerate,window,condlabels,[],options);
 
 %% create model for the data
-% Pretending that we are naive of the model that we used to create our
+% Pretending that we are naive to the model that we used to create our
 % data, let's create a model to actually fit the data to.
 model = pret_model();
 
 % While the trial window of our task is from -500 to 3500 ms, here we are
-% not interested in what's happening before 0. In other words,
-% let's set the model window to only look at the region betweeen 0 and 3500
+% not interested in what's happening before 0. So
+% let's set the model window to fit only to the region betweeen 0 and 3500
 % ms (the cost function will only be evaluated along this interval).
 model.window = [0 3500];
 
 % We already know the sampling frequency.
 model.samplerate = taskmodel.samplerate;
 
-% We also know the event times of our task. For the sake of convenience,
-% let's decide that we think there will be a sustained internal signal from
-% precue onset to response time (0 to 2750 ms).
+% We also know the event times of our task. Let's also say that we think 
+% there will be a sustained internal signal from precue onset to response 
+% time (0 to 2750 ms).
 model.eventtimes = [0 1000 1250 1750];
 model.eventlabels = {'precue' 'stim1' 'stim2' 'postcue'}; %optional
 model.boxtimes = {[0 2750]};
 model.boxlabels = {'task'}; %optional
 
-% Let's conveniently decide that we want to fit only event-related
-% amplitude, latency, task-related (box) amplitude, and the tmax of the
-% pupil response function.
+% Let's say we want to fit a model with the following parameters: 
+% event-related, amplitude, latency, task-related (box) amplitude, 
+% and the tmax of the pupil response function. We turn the other parameters
+% off.
 model.yintflag = false;
 model.slopeflag = false;
 
@@ -210,10 +213,9 @@ model.slopeval = 0;
 
 %% estimate model parameters via pret_estimate_sj
 % Now let's perform the parameter estimation procedure on our subject data.
-% The mean of each condition will be fit independently. Let's lower the
-% number of optimizations that will be completed and set the worker (cpu)
-% number to one (for more information, see the help files of pret_estimate
-% and pret_estimate_sj).
+% The mean of each condition will be fit independently. For illustration, 
+% let's run only 3 optimizations using one cpu worker (for more 
+% information, see the help files of pret_estimate and pret_estimate_sj).
 options = pret_estimate_sj();
 options.pret_estimate.optimnum = 3;
 wnum = 1;

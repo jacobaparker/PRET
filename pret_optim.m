@@ -53,7 +53,7 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 %               *since it is relative, only use to compare models/fits on
 %               data from the same task
 % 
-%       *Note - can be input into pret_plot_model and pret_calc in the 
+%       *Note - "optim" can be input into pret_plot_model and pret_calc in 
 %       place of the "model" input*
 % 
 %   Options
@@ -198,19 +198,27 @@ if model.slopeflag
     numparams = numparams + length(model.slopeval);
 end
 
+% define cost function
 f = @(X)optim_cost(X,data,model);
 
 if optimplotflag
     fmincon_options.OutputFcn = @fmincon_outfun;
 end
 
-modelstate = model;
-SSt = sum((data-nanmean(data)).^2);
+% define variables used during optimization
+modelstate = model; % current state of model
+SSt = sum((data-nanmean(data)).^2); % for R2 calculation
 
+% do the optimization
 [X, cost] = fmincon(f,X,A,B,Aeq,Beq,lb,ub,NONLCON,fmincon_options);
 
+% organize optimization results
 modelstate = unloadX(X,modelstate);
-optim = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',modelstate.ampvals,'boxampvals',modelstate.boxampvals,'latvals',modelstate.latvals,'tmaxval',modelstate.tmaxval,'yintval',modelstate.yintval,'slopeval',modelstate.slopeval);
+optim = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},...
+    'samplerate',model.samplerate,'window',model.window,...
+    'ampvals',modelstate.ampvals,'boxampvals',modelstate.boxampvals,...
+    'latvals',modelstate.latvals,'tmaxval',modelstate.tmaxval,...
+    'yintval',modelstate.yintval,'slopeval',modelstate.slopeval);
 optim.numparams = numparams;
 optim.cost = cost;
 optim.R2 = 1 - (cost/SSt);
@@ -249,6 +257,10 @@ optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(
         end
     end
 
+    % reads out parameter values from X and places them into model
+    % structure. rescales values to original units. if fitted latencies 
+    % have resulted in a change in event order, reorders events to ensure 
+    % they occur in a serial order.
     function modelstate = unloadX(X,modelstate)
         numevents = length(modelstate.eventtimes);
         numboxes = length(modelstate.boxtimes);

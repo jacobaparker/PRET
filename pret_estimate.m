@@ -1,7 +1,7 @@
 function [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,trialwindow,model,wnum,options)
 % pret_estimate
-% [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,trialwindow,model)
-% [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,trialwindow,model,options)
+% [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,trialwindow,model,wnum)
+% [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,trialwindow,model,wnum,options)
 % options = pret_estimate()
 % 
 % Optimization algorithm for estimating the model parameters that result in
