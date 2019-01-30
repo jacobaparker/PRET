@@ -1,4 +1,4 @@
-function sjs = pret_batch_process(sjs,model,nboots,wnum,options)
+function sjs = pret_batch_process(sjs,models,nboots,wnum,options)
 % pret_batch_process
 % sjs = pret_batch_process(sjs,models,nboots,wnum)
 % sjs = pret_batch_process(sjs,models,nboots,wnum,options)
@@ -11,7 +11,7 @@ function sjs = pret_batch_process(sjs,model,nboots,wnum,options)
 %       sjs = structure in which each field is an sj structure output by
 %       pret_preprocess.
 % 
-%       model = model structure created by pret_model and filled in by user.
+%       models = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
 %       model.tmaxval, model.yintval, and model.slopeval do NOT need to be 
 %       provided (unless any of those parameters are not being estimated).
@@ -82,7 +82,7 @@ pret_estimate_sj_options = options.pret_estimate_sj;
 pret_bootstrap_sj_options = options.pret_bootstrap_sj;
 pret_model_check_options = options.pret_model_check;
 
-%check models
+check models
 for mm = 1:length(model)
     try
         pret_model_check(model(mm),pret_model_check_options)
@@ -95,11 +95,12 @@ end
 sjfields = fieldnames(sjs);
 
 for s = 1:length(sjfields)
+    fprintf('Subject %s\n',sjfields{s})
     if estflag
-        sjs.(sjfields{s}) = pret_estimate_sj(sjs.(sjfields{s}),model,wnum,pret_estimate_sj_options);
+        sjs.(sjfields{s}) = pret_estimate_sj(sjs.(sjfields{s}),models,wnum,pret_estimate_sj_options);
     end
     if bootflag
-        sjs.(sjfields{s}) = pret_bootstrap_sj(sjs.(sjfields{s}),model,nboots,wnum,pret_bootstrap_sj_options);
+        sjs.(sjfields{s}) = pret_bootstrap_sj(sjs.(sjfields{s}),models,nboots,wnum,pret_bootstrap_sj_options);
     end
 end
     

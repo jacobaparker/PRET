@@ -233,8 +233,8 @@ optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(
                 yl = ylim;
                 xl = xlim;
                 R2 = 1 - (optimValues.fval/SSt);
-                text((xl(2)-xl(1))*.1+xl(1),yl(2)*.95,['Evals: ' num2str(optimValues.funccount)],'HorizontalAlignment','center','BackgroundColor',[0.7 0.7 0.7]);
-                text((xl(2)-xl(1))*.1+xl(1),yl(2)*.85,['R^2: ' num2str(R2)],'HorizontalAlignment','center','BackgroundColor',[0.7 0.7 0.7]);
+                text((xl(2)-xl(1))*.1+xl(1),(yl(2)-yl(1))*.95+yl(1),['Evals: ' num2str(optimValues.funccount)],'HorizontalAlignment','center','BackgroundColor',[0.7 0.7 0.7]);
+                text((xl(2)-xl(1))*.1+xl(1),(yl(2)-yl(1))*.88+yl(1),['R^2: ' num2str(R2)],'HorizontalAlignment','center','BackgroundColor',[0.7 0.7 0.7]);
                 pause(0.04)
             case 'interrupt'
                 % No actions here
@@ -274,10 +274,10 @@ optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(
             %ensures that sequential pupil responses are ascribed to the
             %proper event by assuming the event-related responses occur in
             %the same order as the events occur
-            [~,ind] = sort(modelstate.eventtimes + Ltemp);
-            Ltemp = Ltemp(ind);
+            times = modelstate.eventtimes + Ltemp;
+            [timessort,ind] = sort(times);
             Btemp = Btemp(ind);
-            modelstate.latvals = Ltemp;
+            modelstate.latvals = timessort - modelstate.eventtimes;
             modelstate.ampvals = Btemp;
         else
             numL = 0;
