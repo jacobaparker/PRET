@@ -3,9 +3,10 @@ function [boots, bootestims] = pret_bootstrap(data,samplerate,trialwindow,model,
 % boots = pret_bootstrap(data,samplerate,trialwindow,model,nboots,wnum)
 % boots = pret_bootstrap(data,samplerate,trialwindow,model,nboots,wnum,options)
 % [boots, bootestims] = pret_bootstrap(data,samplerate,trialwindow,model,nboots,wnum,options)
+% options = pret_bootstrap()
 % 
 % Bootstrapping procedure for estimating model parameters. Calculates a set
-% of bootstrapped means fro the data provided, then performs the
+% of bootstrapped means from the data provided, then performs the
 % optimization algorithm on each bootstrapped mean.
 % 
 %   Inputs:
@@ -70,7 +71,7 @@ function [boots, bootestims] = pret_bootstrap(data,samplerate,trialwindow,model,
 %       bootestims = an optional output option. A structure with a length
 %       of nboots, where each element is an estim structure output by
 %       running pret_estimate for single bootstrap iteration.
-%           *Note - each element can be input into pret_plot_model, pret_calc, 
+%           *Note - each estim structure can be input into pret_plot_model, pret_calc, 
 %           or pret_cost in the place of the "model" input*
 % 
 %   Options

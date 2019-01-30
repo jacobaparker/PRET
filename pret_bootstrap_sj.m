@@ -2,6 +2,7 @@ function sj = pret_bootstrap_sj(sj,model,nboots,wnum,options)
 % pret_bootstrap_sj
 % sj = pret_bootstrap_sj(sj,model,nboots,wnum)
 % sj = pret_bootstrap_sj(sj,model,nboots,wnum,options)
+% options = pret_bootstrap_sj()
 % 
 % Performs the bootstrapping procedure for estimating model parameters on
 % each set of data that has been preprocessed/organized into a sj structure
@@ -14,8 +15,8 @@ function sj = pret_bootstrap_sj(sj,model,nboots,wnum,options)
 % 
 %       model = model structure created by pret_model and filled in by user.
 %       Parameter values in model.ampvals, model.boxampvals, model.latvals,
-%       model.tmaxval, model.yintval, and model.slopeval do NOT need to be 
-%       provided (unless any of those parameters are not being estimated).
+%       model.tmaxval, model.yintval, and model.slopeval need to be
+%       provided only if they are not being estimated.
 %           *NOTE - if you want to fit multiple models, you can input an
 %           Nx1 structure with the same fields as "model", where N is the
 %           number of models and each element is a separate model
