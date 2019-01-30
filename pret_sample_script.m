@@ -76,9 +76,6 @@ taskmodel.latbounds = repmat([-500;500],1,length(taskmodel.eventtimes));
 taskmodel.boxampbounds = [0;100];
 taskmodel.tmaxbounds = [500;1500];
 
-% We would need values for these parameters to generate data, but we are
-% actually going to create 3 conditions with differing parameters first.
-%%%%% RD (alternative):
 % So far, the model's specifications are common to all task conditions. Now
 % let's define different models for each condition so that we can
 % generate artificial data for each one. This is to simulate data that you

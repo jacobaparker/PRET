@@ -1,7 +1,7 @@
 function sj = pret_estimate_sj(sj,model,wnum,options)
 % pret_estimate_sj
-% sj = pret_estimate_sj(sj,models)
-% sj = pret_estimate_sj(sj,models,options)
+% sj = pret_estimate_sj(sj,models,wnum)
+% sj = pret_estimate_sj(sj,models,wnum,options)
 % 
 % Performs the parameter estimation procedure for each set of data that has
 % been preprocessed/organized into a sj structure by pret_preprocess.

@@ -118,7 +118,6 @@ Beq = options.fmincon.Beq;
 NONLCON = options.fmincon.NONLCON;
 fmincon_options = options.fmincon.options;
 
-modelstate = model;
 sfact = samplerate/1000;
 time = trialwindow(1):1/sfact:trialwindow(2);
 
@@ -206,27 +205,26 @@ if optimplotflag
 end
 
 % define variables used during optimization
-modelstate = model; % current state of model
 SSt = sum((data-nanmean(data)).^2); % for R2 calculation
 
 % do the optimization
 [X, cost] = fmincon(f,X,A,B,Aeq,Beq,lb,ub,NONLCON,fmincon_options);
 
 % organize optimization results
-modelstate = unloadX(X,modelstate);
+model = unloadX(X,model);
 optim = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},...
     'samplerate',model.samplerate,'window',model.window,...
-    'ampvals',modelstate.ampvals,'boxampvals',modelstate.boxampvals,...
-    'latvals',modelstate.latvals,'tmaxval',modelstate.tmaxval,...
-    'yintval',modelstate.yintval,'slopeval',modelstate.slopeval);
+    'ampvals',model.ampvals,'boxampvals',model.boxampvals,...
+    'latvals',model.latvals,'tmaxval',model.tmaxval,...
+    'yintval',model.yintval,'slopeval',model.slopeval);
 optim.numparams = numparams;
 optim.cost = cost;
 optim.R2 = 1 - (cost/SSt);
 optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(data)));
 
-    function cost = optim_cost(X,data,modelstate)
-        modelstate = unloadX(X,modelstate);
-        cost = pret_cost(data,samplerate,modelstate.window,modelstate,pret_cost_options);  
+    function cost = optim_cost(X,data,model)
+        model = unloadX(X,model);
+        cost = pret_cost(data,samplerate,model.window,model,pret_cost_options);  
     end
 
     function stop = fmincon_outfun(X,optimValues,state)
@@ -234,9 +232,9 @@ optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(
         switch state
             case 'iter'
                 clf
-                modelstate = unloadX(X,modelstate);
+                model = unloadX(X,model);
                 gobj1 = plot(time,data,'k','LineWidth',1.5);
-                [~, gobj2] = pret_plot_model(modelstate);
+                [~, gobj2] = pret_plot_model(model);
                 legend([gobj1 gobj2],{'data' 'model'})
                 yl = ylim;
                 xl = xlim;
@@ -261,53 +259,53 @@ optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(
     % structure. rescales values to original units. if fitted latencies 
     % have resulted in a change in event order, reorders events to ensure 
     % they occur in a serial order.
-    function modelstate = unloadX(X,modelstate)
-        numevents = length(modelstate.eventtimes);
-        numboxes = length(modelstate.boxtimes);
+    function model = unloadX(X,model)
+        numevents = length(model.eventtimes);
+        numboxes = length(model.boxtimes);
         
-        if modelstate.ampflag
+        if model.ampflag
             numEA = numevents;
-            modelstate.ampvals = X(1:numEA) .* (1/ampfact);
+            model.ampvals = X(1:numEA) .* (1/ampfact);
         else
             numEA = 0;
         end
-        if modelstate.boxampflag
+        if model.boxampflag
             numBA = numboxes;
-            modelstate.boxampvals = X(numEA+1:numEA+numBA) .* (1/boxampfact);
+            model.boxampvals = X(numEA+1:numEA+numBA) .* (1/boxampfact);
         else
             numBA = 0;
         end
-        if modelstate.latflag
+        if model.latflag
             numL = numevents;
-            Btemp = modelstate.ampvals;
+            Btemp = model.ampvals;
             Ltemp = X(numEA+numBA+1:numEA+numBA+numL).*(1/latfact);
             %sort component pupil responses by the order they occur in on
             %the basis of eventtime + latency
             %ensures that sequential pupil responses are ascribed to the
             %proper event by assuming the event-related responses occur in
             %the same order as the events occur
-            times = modelstate.eventtimes + Ltemp;
+            times = model.eventtimes + Ltemp;
             [timessort,ind] = sort(times);
             Btemp = Btemp(ind);
-            modelstate.latvals = timessort - modelstate.eventtimes;
-            modelstate.ampvals = Btemp;
+            model.latvals = timessort - model.eventtimes;
+            model.ampvals = Btemp;
         else
             numL = 0;
         end
-        if modelstate.tmaxflag
+        if model.tmaxflag
             numt = 1;
-            modelstate.tmaxval = X(numEA+numBA+numL+1) .* (1/tmaxfact);
+            model.tmaxval = X(numEA+numBA+numL+1) .* (1/tmaxfact);
         else
             numt = 0;
         end
-        if modelstate.yintflag
+        if model.yintflag
             numy = 1;
-            modelstate.yintval = X(numEA+numBA+numL+numt+1) .* (1/yintfact);
+            model.yintval = X(numEA+numBA+numL+numt+1) .* (1/yintfact);
         else
             numy = 0;
         end
-        if modelstate.slopeflag
-            modelstate.slopeval = X(numEA+numBA+numL+numt+numy+1) .* (1/slopefact);
+        if model.slopeflag
+            model.slopeval = X(numEA+numBA+numL+numt+numy+1) .* (1/slopefact);
         end
     end
 

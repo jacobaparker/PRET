@@ -1,7 +1,7 @@
 function pret_model_check(model,options)
 % pret_model_check
 % pret_model_check(model)
-% pret_model_check(options)
+% pret_model_check(model,options)
 % 
 % Checks if the specifications in "model" are valid. If a model is not
 % valid, will throw an error. Otherwise, if a model is valid, no error will
