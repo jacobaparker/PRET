@@ -8,6 +8,8 @@ __Pupil Response Estimation Toolbox (PRET)__
   The functions in this toolbox can be used to implement the analysis described in (insert paper here)[1], which builds upon the
   paradigm created by Hoeks and Levelt in 1993[2]. Once you download PRET, you will be _ready_ to complete this type of analysis         yourself.
   
+  Code developed using Eyelink eyetracking data and MATLAB R2018b.
+  
 ## Overview ##
   PRET works with data that has already been epoched and organized into separate trials.
 
@@ -39,7 +41,6 @@ pret_optim.m | performs constrained optimization to fit model parameters to a si
 pret_plot_boots.m | plots the results of performing the bootstrapping procedure
 pret_plot_model.m | plots a model or the results of the estimation procedure
 pret_preprocess.m | performs simple preprocessing of data and/or organizes it into an "sj" structure
-pret_sample_data.mat | sample data used in pret_sample_script.m
 pret_sample_script.m | a sample script demonstrating the use of PRET with sample data
 pupilrf.m | creates a pupil response function with the input parameters[2]
 
