@@ -8,6 +8,8 @@ __Pupil Response Estimation Toolbox (PRET)__
   The functions in this toolbox can be used to implement the analysis described in (insert paper here)[1], which builds upon the
   paradigm created by Hoeks and Levelt in 1993[2]. Once you download PRET, you will be _ready_ to complete this type of analysis         yourself.
   
+  Requires MATLAB and the Statistics Toolbox of MATLAB.
+  
   Code developed using Eyelink eyetracking data and MATLAB R2018b.
   
 ## Overview ##
