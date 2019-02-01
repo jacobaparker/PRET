@@ -29,7 +29,7 @@ function fhs = pret_plot_boots(boots,model,options)
 % 
 %       pret_model_check = options for pret_model_check
 % 
-% Jacob Parker 2018
+% Jacob Parker and Rachel Denison, 2019
 
 close all
 

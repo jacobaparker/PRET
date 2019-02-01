@@ -36,7 +36,7 @@ function cost = pret_cost(data,samplerate,trialwindow,model,options)
 %       pret_calc_options = options structure for pret_calc, which pret_cost uses
 %       to produce the time series from "model".
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 5
     opts = pret_default_options();

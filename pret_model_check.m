@@ -16,7 +16,7 @@ function pret_model_check(model,options)
 %   checkparams: (true/false) = check if parameter values filled out, even
 %   for models where those parameters are being fit (default = false)
 % 
-% Jacob Parker 2018
+% Jacob Parker and Rachel Denison, 2019
 
 if nargin < 2
     opts = pret_default_options();

@@ -92,7 +92,7 @@ function [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,tri
 % 
 %       pret_model_check = options for pret_model_check
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 6
     opts = pret_default_options();

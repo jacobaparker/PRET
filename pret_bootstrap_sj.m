@@ -52,7 +52,7 @@ function sj = pret_bootstrap_sj(sj,model,nboots,wnum,options)
 % 
 %       pret_model_check = options for pret_model_check
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 5
     opts = pret_default_options();
@@ -86,7 +86,7 @@ for mm = 1:length(model)
     fprintf('\nModel %d',mm)
     for cc = 1:length(sj.conditions)
         fprintf('\nCondition %s\n',sj.conditions{cc})
-        sj.boots.(sj.conditions{cc})(mm) = pret_bootstrap(sj.(sj.conditions{cc}),sj.samplerate,sj.trialwindow,model(mm),nboots,wnum,pret_bootstrap_options);
+        sj.boots(mm).(sj.conditions{cc}) = pret_bootstrap(sj.(sj.conditions{cc}),sj.samplerate,sj.trialwindow,model(mm),nboots,wnum,pret_bootstrap_options);
     end
     if saveflag
         save(savefile,'sj')

@@ -53,7 +53,7 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 % 
 %       pret_model_check = options for pret_model_check
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 4
     opts = pret_default_options();
@@ -88,7 +88,7 @@ for mm = 1:length(model)
     for cc = 1:length(sj.conditions)
         cond = sj.conditions{cc};
         fprintf('Condition %s\n',cond)
-        sj.estim.(cond)(mm) = pret_estimate(sj.means.(cond), ...
+        sj.estim(mm).(cond) = pret_estimate(sj.means.(cond), ...
             sj.samplerate, sj.trialwindow, model(mm), wnum, pret_estimate_options);
         
         if saveflag

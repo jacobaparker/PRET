@@ -10,6 +10,8 @@
 % 
 % For more information about the modeling framework presented here, see 
 % [insert citation here]
+% 
+% Jacob Parker and Rachel Denison, 2019
 
 %% Define a task (by creating a model)
 % Let's preallocate an empty model structure to represent a hypothetical

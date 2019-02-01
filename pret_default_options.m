@@ -12,6 +12,8 @@ function options = pret_default_options()
 % 
 % Default options for most functions can be changed by modifying this 
 % function directly.
+% 
+% Jacob Parker and Rachel Denison, 2019
 
 options = struct('pret_model_check',[],'pret_calc',[],'pret_cost',[],'pret_optim',[],'pret_estimate',[],'pret_bootstrap',[],...
     'pret_generate_params',[],'pret_fake_data',[],'pret_preprocess',[],'pret_estimate_sj',[],...

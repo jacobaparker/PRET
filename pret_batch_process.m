@@ -63,7 +63,7 @@ function sjs = pret_batch_process(sjs,models,nboots,wnum,options)
 % 
 %       pret_model_check = options for pret_model_check
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 5
     opts = pret_default_options();

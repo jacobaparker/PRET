@@ -26,7 +26,7 @@ function [fh, go] = pret_plot_model(model,options)
 %       pret_plot_model uses to calculate the model time series and
 %       regressors that are plotted.
 % 
-% Jacob Parker 2018
+% Jacob Parker and Rachel Denison, 2019
 
 if nargin < 2
     opts = pret_default_options();

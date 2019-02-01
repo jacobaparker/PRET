@@ -84,7 +84,7 @@ function [boots, bootestims] = pret_bootstrap(data,samplerate,trialwindow,model,
 % 
 %       pret_model_check = options for pret_model_check
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 7
     opts = pret_default_options();

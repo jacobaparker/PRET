@@ -1,7 +1,7 @@
 function output = blinkinterp(trial,samplerate,th1,th2,bwindow,betblink)
-%Based on method described in Mathôt 2013
-%https://www.researchgate.net/publication/236268543_A_simple_way_to_reconstruct_pupil_size_during_eye_blinks
-%%%%% RD: Add full Mathôt citation %%%%%%
+%Based on method described in:
+% Mathôt, Sebastiaan. (2013). A simple way to reconstruct pupil size during 
+% eye blinks. FigShare. 10.6084/m9.figshare.688001
 %
 %blinkinterp detects blink regions in a pupil size timeseries, removes the
 %regions, then interpolates through those regions using the surrounding
@@ -66,6 +66,8 @@ function output = blinkinterp(trial,samplerate,th1,th2,bwindow,betblink)
 %
 %output:
 %   output = trial with blink regions removed and interpolated
+% 
+% Jacob Parker and Rachel Denison, 2019
 
 sf = 1000/samplerate; % sampling factor
 th1 = th1*sf;

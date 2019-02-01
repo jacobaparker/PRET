@@ -21,7 +21,7 @@ function output = pupilrf(t,n,tmax,t0)
 % dilation as a measure of attention: A quantitative system analysis", 
 % Hoeks&Levelt 1993
 % 
-% Jacob Parker 2018
+% Jacob Parker and Rachel Denison, 2019
 
 output = ((t-t0).^n).*exp(-n.*(t-t0)./tmax);
 output((t-t0)<=0) = 0;

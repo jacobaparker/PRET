@@ -58,7 +58,7 @@ function sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline,op
 %       interpolation function. See the function "blinkinterp" for
 %       explanation.
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 6
     opts = pret_default_options();

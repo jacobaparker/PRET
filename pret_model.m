@@ -6,7 +6,7 @@ function model = pret_model()
 % user to create a specific model. This structure provides information to
 % functions about the form of the model.
 % 
-% Jacob Parker 2018
+% Jacob Parker and Rachel Denison, 2019
 
 %% preallocate model
 model = struct('window',[]);

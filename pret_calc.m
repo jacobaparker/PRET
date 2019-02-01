@@ -36,7 +36,7 @@ function [Ycalc, X] = pret_calc(model,options)
 % 
 %       pret_model_check = options for pret_model_check
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 2
     opts = pret_default_options();

@@ -64,7 +64,7 @@ function [data, outparams] = pret_fake_data(numtseries,parammode,samplerate,tria
 % 
 %       pret_model_check = options for pret_model_check
 %
-%   Jacob Parker 2018
+%   Jacob Parker and Rachel Denison, 2019
 
 if nargin < 6
     opts = pret_default_options();
