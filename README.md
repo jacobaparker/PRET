@@ -23,6 +23,9 @@ __Pupil Response Estimation Toolbox (PRET)__
   * Plot the results of model estimation and the bootstrapping procedure
   * Perform estimation and/or bootstrapping procedure with multiple models for one or more datasets
   
+## License ##
+  PRET is a free of charge, open source toolbox distributed under the GNU General Public License version 3.
+  
 ## Functions ##
 Function | Description
 ---------|------------
