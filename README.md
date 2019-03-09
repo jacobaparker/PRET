@@ -3,7 +3,7 @@ __Pupil Response Estimation Toolbox (PRET)__
 
   by Jacob Parker and Rachel Denison
   
-  ![](PRET.gif)
+  <img src="PRET.gif" width="600" height="450">
   
   Welcome to the Pupil Response Estimation Toolbox (PRET)! This is a freely available, Matlab toolbox for analyzing pupillometry
   data by modeling the pupil size time series as a linear combination of pupil responses to discrete events occurring over time.
