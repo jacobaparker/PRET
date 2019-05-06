@@ -27,6 +27,8 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 %       options = options structure for pret_estimate_sj. Default options can be
 %       returned by calling this function with no arguments, or see
 %       pret_default_options.
+%           options.datamode can be 'mean' to fit the trial means or 'single' to 
+%           fit single trials simultaneously.
 %
 %   Output
 %
@@ -67,6 +69,7 @@ end
 
 %OPTIONS
 pret_estimate_options = options.pret_estimate;
+datamode = options.datamode;
 saveflag = options.saveflag;
 savefile = options.savefile;
 pret_model_check_options = options.pret_model_check;
@@ -88,7 +91,15 @@ for mm = 1:length(model)
     for cc = 1:length(sj.conditions)
         cond = sj.conditions{cc};
         fprintf('Condition %s\n',cond)
-        sj.estim(mm).(cond) = pret_estimate(sj.means.(cond), ...
+        switch datamode
+            case 'mean'
+                data = sj.means.(cond);
+            case 'single'
+                data = sj.(cond);
+            otherwise
+                error('"datamode" not recognized')
+        end
+        sj.estim(mm).(cond) = pret_estimate(data, ...
             sj.samplerate, sj.trialwindow, model(mm), wnum, pret_estimate_options);
         
         if saveflag

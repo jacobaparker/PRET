@@ -125,12 +125,12 @@ time = trialwindow(1):1/sfact:trialwindow(2);
 pret_model_check(model,pret_model_check_options)
 
 %data is a vector
-if size(data,1) ~= 1
-    error('The "data" argument must be a row vector')
-end
+% if size(data,1) ~= 1
+%     error('The "data" argument must be a row vector')
+% end
 
 %samplerate, trialwindow vs data
-if length(time) ~= length(data)
+if length(time) ~= size(data,2)
     error('The number of time points according to samplerate and trialwindow does not equal the number of data points in data')
 end
 
@@ -147,7 +147,7 @@ end
 %crop data to match model.window
 datalb = find(model.window(1) == time);
 dataub = find(model.window(2) == time);
-data = data(datalb:dataub);
+data = data(:,datalb:dataub);
 
 %recalculate time point vector
 time = model.window(1):1/sfact:model.window(2);

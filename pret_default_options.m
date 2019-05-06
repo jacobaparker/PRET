@@ -97,6 +97,7 @@ options.pret_preprocess.betblink = 75;
 
 %% pret_estimate_sj
 options.pret_estimate_sj.pret_estimate = options.pret_estimate;
+options.pret_estimate_sj.datamode = 'mean'; 
 options.pret_estimate_sj.saveflag = false;
 options.pret_estimate_sj.savefile = '';
 options.pret_estimate_sj.pret_model_check = options.pret_model_check;

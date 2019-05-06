@@ -72,10 +72,24 @@ if ~(any(model.window(1) == time)) || ~(any(model.window(2) == time ))
     error('Model time window does not fall on time points according to sample rate and trial window')
 end
 
+%how many time series to fit simultaneously?
+nts = size(data,1);
+
 %crop data to match model.window
 datalb = find(model.window(1) == time);
 dataub = find(model.window(2) == time);
-data = data(datalb:dataub);
+data = data(:,datalb:dataub);
 
 Ycalc = pret_calc(model,pret_calc_options);
+
+if nts>1
+    % concatenate time series
+    temp = data';
+    data = temp(:)';
+    
+    % concatenate model prediction
+    Ycalc = repmat(Ycalc,1,nts);
+end
+
 cost = sum((data-Ycalc).^2);
+
