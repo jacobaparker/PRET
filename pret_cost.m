@@ -91,5 +91,5 @@ if nts>1
     Ycalc = repmat(Ycalc,1,nts);
 end
 
-cost = sum((data-Ycalc).^2);
+cost = nansum((data-Ycalc).^2);
 

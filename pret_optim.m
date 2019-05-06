@@ -205,7 +205,7 @@ if optimplotflag
 end
 
 % define variables used during optimization
-SSt = sum((data-nanmean(data)).^2); % for R2 calculation
+SSt = nansum((data(:)-nanmean(data(:))).^2); % for R2 calculation
 
 % do the optimization
 [X, cost] = fmincon(f,X,A,B,Aeq,Beq,lb,ub,NONLCON,fmincon_options);
@@ -220,7 +220,7 @@ optim = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},...
 optim.numparams = numparams;
 optim.cost = cost;
 optim.R2 = 1 - (cost/SSt);
-optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(data)));
+optim.BICrel = (length(data(:)) * log(cost/length(data(:)))) + (numparams *log(length(data(:))));
 
     function cost = optim_cost(X,data,model)
         model = unloadX(X,model);
@@ -233,9 +233,9 @@ optim.BICrel = (length(data) * log(cost/length(data))) + (numparams *log(length(
             case 'iter'
                 clf
                 model = unloadX(X,model);
-                gobj1 = plot(time,data,'k','LineWidth',1.5);
+                gobj1 = plot(time,data','k','LineWidth',1.5);
                 [~, gobj2] = pret_plot_model(model);
-                legend([gobj1 gobj2],{'data' 'model'})
+                legend([gobj1(1) gobj2],{'data' 'model'})
                 yl = ylim;
                 xl = xlim;
                 R2 = 1 - (optimValues.fval/SSt);
