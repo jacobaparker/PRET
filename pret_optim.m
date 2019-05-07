@@ -220,7 +220,8 @@ optim = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},...
 optim.numparams = numparams;
 optim.cost = cost;
 optim.R2 = 1 - (cost/SSt);
-optim.BICrel = (length(data(:)) * log(cost/length(data(:)))) + (numparams *log(length(data(:))));
+n = nnz(~isnan(data(:)));
+optim.BICrel = (n * log(cost/n)) + (numparams *log(n));
 
     function cost = optim_cost(X,data,model)
         model = unloadX(X,model);
