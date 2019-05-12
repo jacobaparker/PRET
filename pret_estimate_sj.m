@@ -27,8 +27,6 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 %       options = options structure for pret_estimate_sj. Default options can be
 %       returned by calling this function with no arguments, or see
 %       pret_default_options.
-%           options.trialmode can be 'mean' to fit the trial means or 'single' to 
-%           fit single trials simultaneously.
 %
 %   Output
 %
@@ -46,6 +44,9 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 %       pret_estimate_options = options structure for pret_estimate, 
 %       which pret_estimate_sj uses to perform parameter estimation for each
 %       set of data in sj.
+% 
+%       trialmode = 'mean' to fit the trial means or 'single' to fit single 
+%       trials simultaneously (default = 'mean')
 % 
 %       saveflag (true/false) = save a .mat file with the output sj
 %       variable?

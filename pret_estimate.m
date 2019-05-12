@@ -14,7 +14,9 @@ function [estim, searchoptims, searchpoints] = pret_estimate(data,samplerate,tri
 % 
 %   Inputs:
 %   
-%       data = a single pupil size time series as a row vector.
+%       data = a single pupil size time series as a row vector OR an MxN
+%       matrix with M time series. If a matrix, will compute single set of
+%       parameters minimizing the cost for all time series.
 % 
 %       samplerate = sampling rate of data in Hz.
 % 

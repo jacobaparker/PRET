@@ -70,5 +70,5 @@ ax.ColorOrderIndex = 1;
 plot(repmat(onsets,2,1),repmat([yl(1) ; yl(2)],1,length(model.eventtimes)),'--','LineWidth',1);
 ax.FontSize = 12;
 xlabel('Time (ms)','FontSize',16)
-ylabel('Pupil area (proportion change)','FontSize',16)
+ylabel('Pupil area (percent change)','FontSize',16)
 legend([go],{'model'})

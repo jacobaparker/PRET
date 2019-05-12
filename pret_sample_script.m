@@ -128,13 +128,13 @@ figure(1)
 plot(time,condition1data)
 title('Condition 1')
 xlabel('time (ms)')
-ylabel('pupil size (proportion change from baseline')
+ylabel('pupil size (% change from baseline')
 
 figure(2)
 plot(time,condition2data)
 title('Condition 2')
 xlabel('time (ms)')
-ylabel('pupil size (proportion change from baseline')
+ylabel('pupil size (% change from baseline')
 
 figure(3)
 plot(time,condition3data)
@@ -217,6 +217,10 @@ model.slopeval = 0;
 % information, see the help files of pret_estimate and pret_estimate_sj).
 options = pret_estimate_sj();
 options.pret_estimate.optimnum = 3;
+% if you want to try fiting the parameters using single trials instead of the mean,
+% use these lines (you'll want to turn off the optimization plots for this):
+%   options.trialmode = 'single';
+%   options.pret_estimate.pret_optim.optimplotflag = false;
 wnum = 1;
 
 sj = pret_estimate_sj(sj,model,wnum,options);

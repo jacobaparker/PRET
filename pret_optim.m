@@ -14,7 +14,9 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 % 
 %   Inputs:
 %   
-%       data = a single pupil size time series as a row vector.
+%       data = a single pupil size time series as a row vector OR an MxN
+%       matrix with M time series. If a matrix, will compute single set of
+%       parameters minimizing the cost for all time series.
 % 
 %       samplerate = sampling rate of data in Hz.
 % 
@@ -58,7 +60,7 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 % 
 %   Options
 %
-%       optim_plot_flag (true/false) = plot optimization in realtime? Set
+%       optimplotflag (true/false) = plot optimization in realtime? Set
 %       to false if you want speed.
 % 
 %       pret_cost = options structure for pret_cost, which pret_optim uses
@@ -74,9 +76,9 @@ function optim = pret_optim(data,samplerate,trialwindow,model,options)
 % 
 %       tmaxfact (1/1000) = scaling factor for the tmax parameter.
 % 
-%       yintfact (10) = scaling factor for the yint parameter.
+%       yintfact (1/10) = scaling factor for the yint parameter.
 % 
-%       slopefact (10000) = scaling factor for the slope parameter.
+%       slopefact (100) = scaling factor for the slope parameter.
 % 
 %       fmincon.
 %           A, B, Aeq, Beq, NONLCON, options = input arguments/options

@@ -6,11 +6,14 @@ function cost = pret_cost(data,samplerate,trialwindow,model,options)
 % 
 % Calculates the sum of the square errors between some input pupil size
 % time series "data" and a time series created from the specifications and
-% parameters in "model".
+% parameters in "model". If a MxN matrix with M time series is input into
+% "data", the cost will be computed between each time series and the single 
+% time series produced from "model" and summed.
 % 
 %   Inputs:
 %   
-%       data = a single pupil size time series as a row vector.
+%       data = a single pupil size time series as a row vector OR a MxN
+%       matrix with M time series.
 % 
 %       samplerate = sampling rate of data in Hz.
 % 

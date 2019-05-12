@@ -25,4 +25,4 @@ function output = pupilrf(t,n,tmax,t0)
 
 output = ((t-t0).^n).*exp(-n.*(t-t0)./tmax);
 output((t-t0)<=0) = 0;
-output = (output/(max(output))) .* 0.01;
+output = (output/(max(output)));

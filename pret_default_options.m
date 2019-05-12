@@ -38,8 +38,8 @@ options.pret_optim.ampfact = 1/10;
 options.pret_optim.boxampfact = 1/10;
 options.pret_optim.latfact = 1/1000;
 options.pret_optim.tmaxfact = 1/1000;
-options.pret_optim.yintfact = 10;
-options.pret_optim.slopefact = 10000;
+options.pret_optim.yintfact = 1/10;
+options.pret_optim.slopefact = 100;
 options.pret_optim.pret_cost = options.pret_cost;
 options.pret_optim.pret_model_check = options.pret_model_check;
 options.pret_optim.pret_model_check.checkparams = true;
@@ -61,8 +61,8 @@ options.pret_generate_params.ampfact = 1/10;
 options.pret_generate_params.boxampfact = 1/10;
 options.pret_generate_params.latfact = 1/1000;
 options.pret_generate_params.tmaxfact = 1/1000;
-options.pret_generate_params.yintfact = 10;
-options.pret_generate_params.slopefact = 10000;
+options.pret_generate_params.yintfact = 1/10;
+options.pret_generate_params.slopefact = 100;
 options.pret_generate_params.pret_model_check = options.pret_model_check;
 
 %% pret_estimate

@@ -47,8 +47,9 @@ function sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline,op
 %   Options
 %
 %       normflag: (true/false) = baseline normalize epoched trials?
-%       [(x-baseline)/baseline], where x is the trial and baseline is the
-%       average pupil size value over the baseline region indicated.
+%       [(x-baseline)/baseline] X 100, where x is the trial and baseline is the
+%       average pupil size value over the baseline region indicated. Units
+%       become percent change from baseline.
 % 
 %       blinkflag: (true/false) = perform blink interpolation of each trial?
 %       Uses a cubic spline interpolation algorithm described by Mathôt
@@ -136,7 +137,7 @@ if normflag
     for dd = 1:length(datatemp)
         base = nanmean(datatemp{dd}(:,(-trialwindow(1)*sfact)+(baseline(1)*sfact)+1:(-trialwindow(1)*sfact)+(baseline(2)*sfact)),2);
         for tt = 1:size(datatemp{dd},1)
-            datatemp{dd}(tt,:) = (datatemp{dd}(tt,:)-base(tt))/base(tt);
+            datatemp{dd}(tt,:) = ((datatemp{dd}(tt,:)-base(tt))/base(tt)) .* 100;
         end
     end
 end

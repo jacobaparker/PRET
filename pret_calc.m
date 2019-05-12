@@ -78,7 +78,7 @@ for bx = 1:size(X2,1)
     
     h = pupilrf(time,n,model.tmaxval,model.boxtimes{bx}(1));
     temp = conv(h,(ones(1,(model.boxtimes{bx}(2)-model.boxtimes{bx}(1))*sfact+1)));
-    temp = (temp/max(temp)) .* 0.01 .* model.boxampvals(bx);
+    temp = (temp/max(temp)) .* model.boxampvals(bx);
     X2(bx,:) = temp(1:length(time));
     
 end

@@ -56,7 +56,7 @@ function params = pret_generate_params(num,parammode,model,options)
 %       using their respective scaling factors (below).
 % 
 %       ampfact (1/10), boxampfact (1/10), latfact (1/1000), tmaxfact (1/1000), 
-%       yintfact (10), slopefact (10000) = if 'normal' parammode is used, 
+%       yintfact (1/10), slopefact (100) = if 'normal' parammode is used, 
 %       these options specify the scaling factors for amplitude, latency, 
 %       tmax, y-intercept, and slope parameters respectively. This is
 %       necessary to apply a single sigma value to different parameters
