@@ -88,7 +88,7 @@ sf = 1000/samplerate; % sampling factor
 th1 = th1*sf;
 th2 = th2*sf;
 bwindow = bwindow/sf;
-betblink = betblink/sf;
+betblink = ceil(betblink/sf);
 
 nhan = 11; % hanning window parameter
 ncushion = 10; % size of cushion for convolution
