@@ -7,7 +7,7 @@ __Pupil Response Estimation Toolbox (PRET)__
   
   Welcome to the Pupil Response Estimation Toolbox (PRET)! This is a freely available, Matlab toolbox for analyzing pupillometry
   data by modeling the pupil size time series as a linear combination of pupil responses to discrete events occurring over time.
-  The functions in this toolbox can be used to implement the analysis described in (insert paper here)[1], which builds upon the
+  The functions in this toolbox can be used to implement the analysis described in Denison, Parker, and Carrasco[1], which builds upon the
   paradigm created by Hoeks and Levelt in 1993[2]. Once you download PRET, you will be _ready_ to complete this type of analysis         yourself.
   
   Requires MATLAB and the Statistics Toolbox of MATLAB.
@@ -68,6 +68,6 @@ See pret_sample_script.m for a simple demonstration of this workflow.
 * The bootstrap procedure may only be feasible with a multicore machine, depending on the number of bootstrap iterations desired and the number of datasets being fit
 
 ## References ##
-  1. (insert paper here)
-  2. "Pupillary dilation as a measure of attention: A quantitative system analysis", Hoeks and Levelt 1993
-  3. "A simple way to reconstruct pupil size during eye blinks", Mathôt 2013
+  1. "Modeling pupil responses to rapid sequential events". Denison, Parker, and Carrasco. [Submitted]. bioRxiv 655902; doi: https://doi.org/10.1101/655902
+  2. "Pupillary dilation as a measure of attention: A quantitative system analysis". Hoeks and Levelt. 1993
+  3. "A simple way to reconstruct pupil size during eye blinks". Mathôt. 2013
