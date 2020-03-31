@@ -49,12 +49,21 @@ model.slopeflag = true;
 %% define instantaneous events/box regressors
 % vectors containing the time of occurrence (in ms) for each
 % instantaneous event and cell array of corresponding labels (optional)
+% if event timing is identical for all trials, eventtimes should be a 1xm
+% vector, where m is the number of events
+% if event timing varies from trial to trial, eventtimes should be a nxm
+% matrix, where n is the number of trials and m is the number of events.
+% each row of the matrix is the event times for that trial
+% eventlabels is always a 1xm cell array with the event names
 model.eventtimes = [];
 model.eventlabels = {};
 
 % cell array of two element vectors, each containing the start and end
 % times (in ms) for each box function regressor and cell array of
 % corresponding labels (optional)
+% if event timing varies from trial to trial, each cell should contain an
+% nx2 matrix, where n is the number of trials. each row of the matrix gives
+% the box start and end times for one trial.
 % **** Should the latency of this be allowed to be estimated? ****
 model.boxtimes = {};
 model.boxlabels = {};

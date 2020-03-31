@@ -1,7 +1,7 @@
-function cost = pret_cost(data,samplerate,trialwindow,model,options)
+function [cost, Ycalc, data] = pret_cost(data,samplerate,trialwindow,model,options)
 % pret_cost
-% cost = pret_cost(data,samplerate,trialwindow,model)
-% cost = pret_cost(data,samplerate,trialwindow,model,options)
+% [cost, Ycalc, data] = pret_cost(data,samplerate,trialwindow,model)
+% [cost, Ycalc, data] = pret_cost(data,samplerate,trialwindow,model,options)
 % options = pret_cost()
 % 
 % Calculates the sum of the square errors between some input pupil size
@@ -93,12 +93,22 @@ end
 %how many time series to fit simultaneously?
 nts = size(data,1);
 
+%are distinct event timings specified for each trial?
+ntr = size(model.eventtimes,1);
+
 %crop data to match model.window
 datalb = find(model.window(1) == time);
 dataub = find(model.window(2) == time);
 data = data(:,datalb:dataub);
 
-Ycalc = pret_calc(model,pret_calc_options);
+for itr = 1:ntr
+    mtr = model;
+    mtr.eventtimes = model.eventtimes(itr,:);
+    for ibox = 1:numel(model.boxtimes)
+        mtr.boxtimes{ibox} = model.boxtimes{ibox}(itr,:);
+    end
+    Ycalc(itr,:) = pret_calc(mtr,pret_calc_options);
+end
 
 if nts>1
     % concatenate time series
@@ -106,7 +116,12 @@ if nts>1
     data = temp(:)';
     
     % concatenate model prediction
-    Ycalc = repmat(Ycalc,1,nts);
+    if ntr>1
+        temp = Ycalc';
+        Ycalc = temp(:)';
+    else
+        Ycalc = repmat(Ycalc,1,nts);
+    end
 end
 
 cost = nansum((data-Ycalc).^2);

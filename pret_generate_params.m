@@ -114,8 +114,8 @@ rng(0)
 
 params = struct('blank',[]);
 
-params.ampvals = nan(num,length(model.eventtimes));
-params.latvals = nan(num,length(model.eventtimes));
+params.ampvals = nan(num,size(model.eventtimes,2));
+params.latvals = nan(num,size(model.eventtimes,2));
 params.tmaxvals = nan(num,1);
 params.yintvals = nan(num,1);
 params.slopevals = nan(num,1);
@@ -128,7 +128,7 @@ switch parammode
         
         %amplitude
         if model.ampflag
-            for cc = 1:length(model.eventtimes)
+            for cc = 1:size(model.eventtimes,2)
                 params.ampvals(:,cc) = unibin(num,model.ampbounds(1,cc),model.ampbounds(2,cc),nbins);
             end
         else
@@ -137,7 +137,7 @@ switch parammode
         
         %latency
         if model.latflag
-            for cc = 1:length(model.eventtimes)
+            for cc = 1:size(model.eventtimes,2)
                 params.latvals(:,cc) = unibin(num,model.latbounds(1,cc),model.latbounds(2,cc),nbins);
             end
         else

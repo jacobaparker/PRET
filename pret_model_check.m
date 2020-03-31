@@ -68,17 +68,23 @@ if isempty(model.boxtimes) && model.boxampflag
     error('If box amplitude is to be estimated, box times must be provided')
 end
 
+if ~isempty(model.boxtimes)
+    if size(model.eventtimes,1) ~= size(model.boxtimes{1},1)
+        error('Number of rows in eventtimes and boxtimes do not match')
+    end
+end
+
 %% event amplitude
 if model.ampflag
     if ~isempty(model.eventtimes)
-        if length(model.eventtimes) ~= size(model.ampbounds,2)
+        if size(model.eventtimes,2) ~= size(model.ampbounds,2)
             error('Number of event amplitude bounds in model not equal to number of events')
         end
         if checkparams
-            if length(model.eventtimes) ~= length(model.ampvals)
+            if size(model.eventtimes,2) ~= length(model.ampvals)
                 error('Number of default event amplitudes not equal to number of events')
             end
-            for ii = 1:length(model.eventtimes)
+            for ii = 1:size(model.eventtimes,2)
                 if (model.ampvals(ii) < model.ampbounds(1,ii)) || (model.ampvals(ii) > model.ampbounds(2,ii))
                     error('At least one given amplitude value in model.ampvals is outside of its\nbounds according to the info in model.ampbounds')
                 end
@@ -86,7 +92,7 @@ if model.ampflag
         end
     end
 else
-    if length(model.eventtimes) ~= length(model.ampvals)
+    if size(model.eventtimes,2) ~= length(model.ampvals)
         error('Number of defualt event amplitudes not equal to number of events')
     end
 end
@@ -94,37 +100,39 @@ end
 %% box amplitude
 if ~isempty(model.boxtimes)
     for ii = 1:length(model.boxtimes)
-        if length(model.boxtimes{ii}) ~= 2
+        if size(model.boxtimes{ii},2) ~= 2
             error('All cells in boxtimes must be a 2 element vector')
         end
-        if ~(any(model.boxtimes{ii}(1) == time)) || ~(any(model.boxtimes{ii}(2) == time))
-            if (rem(model.boxtimes{ii}(2)-time(end),1/sfact) == 0) && (rem(model.boxtimes{ii}(1)-time(1),1/sfact) == 0)
-                % box times can fall outside model.window, but must be on
-                % the time vector if it were to be extended
-            else
-                error('Box %d start and end time points do not fall on time vector defined by\nmodel.window and model.samplerate',ii)
+        for itr = 1:size(model.boxtimes{ii},1)
+            if ~(any(model.boxtimes{ii}(itr,1) == time)) || ~(any(model.boxtimes{ii}(itr,2) == time))
+                if (rem(model.boxtimes{ii}(itr,2)-time(end),1/sfact) == 0) && (rem(model.boxtimes{ii}(itr,1)-time(1),1/sfact) == 0)
+                    % box times can fall outside model.window, but must be on
+                    % the time vector if it were to be extended
+                else
+                    error('Box %d start and end time points do not fall on time vector defined by\nmodel.window and model.samplerate',ii)
+                end
             end
         end
     end
 end
 if model.boxampflag
     if ~isempty(model.boxtimes)
-        if length(model.boxtimes) ~= size(model.boxampbounds,2)
+        if size(model.boxtimes,2) ~= size(model.boxampbounds,2)
             error('Number of box amplitude bounds in model not equal to number of boxes')
         end
         if checkparams
-            if length(model.boxtimes) ~= length(model.boxampvals)
+            if size(model.boxtimes,2) ~= length(model.boxampvals)
                 error('\nNumber of default box amplitude values does not match number of boxes\n')
             end
-            for ii = 1:length(model.boxtimes)
-                if (model.boxampvals(ii) < model.boxampbounds(1,ii)) || (model.boxampvals(ii) > model.boxampbounds(2,ii))
+            for ii = 1:size(model.boxtimes,2)
+                if any(model.boxampvals(:,ii) < model.boxampbounds(1,ii)) || any(model.boxampvals(:,ii) > model.boxampbounds(2,ii))
                     error('At least one given box amplitude value in model.boxampvals is outside of its\nbounds according to the info in model.boxampbounds')
                 end
             end
         end
     end
 else
-    if length(model.boxtimes) ~= length(model.boxampvals)
+    if size(model.boxtimes,2) ~= length(model.boxampvals)
         error('Number of default box amplitudes not equal to number of boxes')
     end
 end
@@ -132,14 +140,14 @@ end
 %% event latency
 if model.latflag
     if ~isempty(model.eventtimes)
-        if length(model.eventtimes) ~= size(model.latbounds,2)
+        if size(model.eventtimes,2) ~= size(model.latbounds,2)
             error('Number of event latency bounds in model not equal to number of events')
         end
         if checkparams
-            if length(model.eventtimes) ~= length(model.latvals)
+            if size(model.eventtimes,2) ~= length(model.latvals)
                 error('\nNumber of default event latency values does not match number of events\n')
             end
-            for ii = 1:length(model.eventtimes)
+            for ii = 1:size(model.eventtimes,2)
                 if (model.latvals(ii) < model.latbounds(1,ii)) || (model.latvals(ii) > model.latbounds(2,ii))
                     error('At least one given latency value in model.latvals is outside of its\nbounds according to the info in model.latbounds')
                 end
@@ -147,7 +155,7 @@ if model.latflag
         end
     end
 else
-    if length(model.eventtimes) ~= length(model.latvals)
+    if size(model.eventtimes,2) ~= length(model.latvals)
         error('Number of default event latency not equal to number of events')
     end
 end

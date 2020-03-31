@@ -278,7 +278,7 @@ optim.BICrel = (n * log(cost/n)) + (numparams *log(n));
     % have resulted in a change in event order, reorders events to ensure 
     % they occur in a serial order.
     function model = unloadX(X,model)
-        numevents = length(model.eventtimes);
+        numevents = size(model.eventtimes,2);
         numboxes = length(model.boxtimes);
         
         if model.ampflag
@@ -302,10 +302,10 @@ optim.BICrel = (n * log(cost/n)) + (numparams *log(n));
             %ensures that sequential pupil responses are ascribed to the
             %proper event by assuming the event-related responses occur in
             %the same order as the events occur
-            times = model.eventtimes + Ltemp;
+            times = mean(model.eventtimes,1) + Ltemp;
             [timessort,ind] = sort(times);
             Btemp = Btemp(ind);
-            model.latvals = timessort - model.eventtimes;
+            model.latvals = timessort - mean(model.eventtimes,1);
             model.ampvals = Btemp;
         else
             numL = 0;

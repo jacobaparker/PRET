@@ -47,6 +47,10 @@ function sj = pret_estimate_sj(sj,model,wnum,options)
 % 
 %       trialmode = 'mean' to fit the trial means or 'single' to fit single 
 %       trials simultaneously (default = 'mean')
+%           in 'mean' mode, the data will be taken from sj.means.(condition
+%           name) and should be a vector 1 x ntimepoints. 
+%           in 'single' mode, the data will be taken from sj.(condition
+%           name) and should be a matrix ntrials x ntimepoints.
 % 
 %       saveflag (true/false) = save a .mat file with the output sj
 %       variable?
@@ -110,8 +114,15 @@ for mm = 1:length(model)
         switch trialmode
             case 'mean'
                 data = sj.means.(cond);
+                if size(data,1) ~= 1
+                    error('When trialmode = "mean", the data must be a row vector')
+                end
             case 'single'
                 data = sj.(cond);
+                if isfield(sj,'singletrialtimes') && ~isempty(sj.singletrialtimes)
+                    model(mm).eventtimes = sj.singletrialtimes.(cond).eventtimes;
+                    model(mm).boxtimes = sj.singletrialtimes.(cond).boxtimes;
+                end
             otherwise
                 error('"trialmode" not recognized')
         end

@@ -102,6 +102,11 @@ X = [X1 ; X2];
 Ycalc = sum(X,1) + model.slopeval*time + model.yintval;
 
     function optim_check(model)
+        %eventtimes
+        if size(model.eventtimes,1)>1
+            error('within pret_calc, model.eventtimes must be a 1 x n vector')
+        end
+        
         %window
         if length(model.window) ~= 2
             error('model.window must be a two element vector')
@@ -119,7 +124,7 @@ Ycalc = sum(X,1) + model.slopeval*time + model.yintval;
         end
         
         %event amplitude
-        if length(model.eventtimes) ~= length(model.ampvals)
+        if size(model.eventtimes,2) ~= length(model.ampvals)
             error('Number of defualt event amplitudes not equal to number of events')
         end
         
@@ -136,7 +141,7 @@ Ycalc = sum(X,1) + model.slopeval*time + model.yintval;
         end
         
         %latency
-        if length(model.eventtimes) ~= length(model.latvals)
+        if size(model.eventtimes,2) ~= length(model.latvals)
             error('Number of defualt event latency not equal to number of events')
         end
         

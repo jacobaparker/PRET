@@ -36,13 +36,24 @@ function sj = pret_preprocess(data,samplerate,trialwindow,condlabels,baseline,op
 %           trialwindow = a copy of the input trialwindow.
 %           conditions = a copy of the input condition labels.
 %           baseline = a copy of the input baseline, if normalization was
-%           done.
+%               done.
 %           <condition names> = there will be a field entitled after every
-%           entry in condlabels. Each of these contains the preprocessed,
-%           epoched trials for that condition (as long as the order
-%           matches!).
+%               entry in condlabels. Each of these contains the preprocessed,
+%               epoched trials for that condition (as long as the order
+%               matches!).
 %           means = a structure containing the mean for each condition
-%           under their own field names.
+%               under their own field names.
+%           singletrialtimes (optional) = if different trials have
+%               different event times, this structure can be used to store the
+%               eventtimes and boxtimes for each trial in each condition:
+%               singletrialtimes.(condition name).eventtimes,
+%               singletrialtimes.(condition name).boxtimes. the times stored
+%               under each condition name will *overwrite* the eventtimes and
+%               boxtimes in model when running pret_estimate_sj. this is
+%               convenient if you want to fit different conditions with the
+%               same model, except for the variable event times. alternatively,
+%               you can simply set eventtimes and boxtimes in model separately
+%               for each condition.
 %
 %   Options
 %

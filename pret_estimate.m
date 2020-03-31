@@ -142,6 +142,22 @@ pret_model_check(model,pret_model_check_options)
 %     error('The "data" argument must be a row vector')
 % end
 
+%size of data vs size of eventtimes
+if size(model.eventtimes,1)>1
+    if size(model.eventtimes,1) ~= size(data,1)
+        error('If fitting single trials, number of rows in eventtimes must match number of rows in data')
+    end
+end
+
+%size of data vs size of boxtimes
+if isfield(model,'boxtimes') && ~isempty(model.boxtimes)
+    if size(model.boxtimes{1},1)>1
+        if size(model.boxtimes{1},1) ~= size(data,1)
+            error('If fitting single trials, number of rows in boxtimes must match number of rows in data')
+        end
+    end
+end
+
 %samplerate, trialwindow vs data
 if length(time) ~= size(data,2)
     error('The number of time points according to samplerate and trialwindow does not equal the number of data points in data')
