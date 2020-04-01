@@ -250,8 +250,14 @@ optim.BICrel = (n * log(cost/n)) + (numparams *log(n));
         switch state
             case 'iter'
                 clf
+                hold on
                 model = unloadX(X,model);
-                gobj1 = plot(time,data','k','LineWidth',1.5);
+                if size(data,1)>1
+                    gobj0 = plot(time,data','Color',[.95 .95 .95],'LineWidth',1);
+                    gobj1 = plot(time,data(1,:)','k','LineWidth',1.5);
+                else
+                    gobj1 = plot(time,data','k','LineWidth',1.5);
+                end
                 [~, gobj2] = pret_plot_model(model);
                 legend([gobj1(1) gobj2],{'data' 'model'})
                 yl = ylim;

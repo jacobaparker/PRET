@@ -59,11 +59,25 @@ pret_calc_options = options.pret_calc;
 sfact = model.samplerate/1000;
 time = model.window(1):1/sfact:model.window(2);
 
-[Ycalc, X] = pret_calc(model,pret_calc_options);
+% if fitting single trials, just plot the first trial
+if size(model.eventtimes,1)>1
+    mtr = model;
+    mtr.eventtimes = model.eventtimes(1,:);
+    for ibox = 1:numel(model.boxtimes)
+        mtr.boxtimes{ibox} = model.boxtimes{ibox}(1,:);
+    end
+    [Ycalc, X] = pret_calc(mtr,pret_calc_options);
+else
+    [Ycalc, X] = pret_calc(model,pret_calc_options);
+end
 
 X = X + model.yintval;
 xl = model.window;
-onsets = model.eventtimes + model.latvals;
+if size(model.eventtimes,1)>1
+    onsets = model.eventtimes(1,:) + model.latvals;
+else
+    onsets = model.eventtimes + model.latvals;
+end
 if any(onsets < model.window(1))
     xl(1) = min(onsets(onsets < model.window(1))) - diff(model.window)/10;
 end
@@ -82,8 +96,11 @@ plot([model.window(1) model.window(2)],[model.yintval model.yintval],'k','LineWi
 xlim(xl)
 yl = ylim;
 ax.ColorOrderIndex = 1;
-plot(repmat(onsets,2,1),repmat([yl(1) ; yl(2)],1,length(model.eventtimes)),'--','LineWidth',1);
+plot(repmat(onsets,2,1),repmat([yl(1) ; yl(2)],1,size(model.eventtimes,2)),'--','LineWidth',1);
 ax.FontSize = 12;
 xlabel('Time (ms)','FontSize',16)
 ylabel('Pupil area (percent change)','FontSize',16)
 legend([go],{'model'})
+if size(model.eventtimes,1)>1
+    title('Trial 1')
+end

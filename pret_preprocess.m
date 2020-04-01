@@ -156,7 +156,7 @@ if normflag
         error('Baseline region falls outside of trial window')
     end
     %does baseline actually match up with time points (time vector)?
-    if ~(any(time == baseline(1)) && any(time == baseline(2)))
+    if ~(any(abs(time-baseline(1))<1e-4) && any(abs(time-baseline(2))<1e-4))
         error('Trial window not congruent with input sampling rate')
     end
     

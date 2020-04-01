@@ -291,3 +291,57 @@ pret_plot_boots(sj.boots.condition2,model);
 %% condition 3 bootstrap results
 close all
 pret_plot_boots(sj.boots.condition3,model);
+
+%% Single trial estimation with variable event timing
+% In some experiments, event timing varies from trial to trial. In that
+% case, we can't use a fixed set of eventtimes and boxtimes but need to
+% model separate timings for each trial. We also need to simultaneously fit
+% all the single trial timeseries, rather than fitting the mean.
+%
+% Let's modify condition1 from above to simulate this situation. Here let's
+% say that stim1 occurs at a different time every trial, varying between
+% 500 and 1000 ms. Here we specify the event times for each trial
+condition4model = condition1model;
+condition4model.eventtimes = repmat([0 1000 1250 1750],numtrials,1);
+stim1times = round(rand(numtrials,1)*500 + 500);
+condition4model.eventtimes(:,2) = stim1times;
+
+% Even though the box times are the same for all trials, boxtimes must also
+% now have a row for each trial
+condition4model.boxtimes{1} = repmat([0 2750],numtrials,1);
+
+% Generate fake data for condition4, trial by trial
+condition4data = [];
+for itr = 1:numtrials
+    mtr = condition4model; % model for this trial
+    mtr.eventtimes = condition4model.eventtimes(itr,:);
+    mtr.boxtimes{1} = condition4model.boxtimes{1}(itr,:);
+    condition4data(itr,:) = pret_fake_data(1,parammode,...
+        taskmodel.samplerate,taskmodel.window,mtr);
+end
+
+% Make a new subject structure. We could use pret_preprocess for this; in
+% this example, we set it up by hand
+sj1 = [];
+sj1.samplerate = 1000;
+sj1.trialwindow = [-500 3500];
+sj1.conditions = {'condition4'};
+sj1.condition4 = condition4data;
+
+% Adapt the model to include the single trial event times
+model1 = model;
+model1.eventtimes = condition4model.eventtimes;
+model1.boxtimes = condition4model.boxtimes;
+
+% Initialize pret_estimate_sj options and set trialmode to "single" to fit
+% single trial data
+options1 = pret_estimate_sj();
+options1.trialmode = 'single';
+
+% For demo purposes, these numbers are small
+options1.pret_estimate.searchnum = 20;
+options1.pret_estimate.optimnum = 1;
+
+% Fit the model
+sj1 = pret_estimate_sj(sj1,model1,wnum,options1);
+
