@@ -68,6 +68,7 @@ See pret_sample_script.m for a simple demonstration of this workflow.
 * The bootstrap procedure may only be feasible with a multicore machine, depending on the number of bootstrap iterations desired and the number of datasets being fit
 
 ## References ##
-  1. "Modeling pupil responses to rapid sequential events". Denison, Parker, and Carrasco. [Submitted]. bioRxiv 655902; doi: https://doi.org/10.1101/655902
-  2. "Pupillary dilation as a measure of attention: A quantitative system analysis". Hoeks and Levelt. 1993
-  3. "A simple way to reconstruct pupil size during eye blinks". Mathôt. 2013
+  1. Denison, R. N.\*, Parker, J. A.\*, and Carrasco, M. (2020). "Modeling pupil responses to rapid sequential events". Behavior Research Methods. https://doi.org/10.3758/s13428-020-01368-6
+  \*equal contribution
+  2. Hoeks, B., & Levelt, W. J. M. (1993). "Pupillary dilation as a measure of attention: A quantitative system analysis". Behavior Research Methods, Instruments, & Computers, 25(1), 16–26. https://doi.org/10.3758/BF03204445
+  3. Mathôt, S. (2013). "A simple way to reconstruct pupil size during eye blinks". https://doi.org/10.6084/m9.figshare.688001
