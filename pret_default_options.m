@@ -89,6 +89,7 @@ options.pret_estimate.pret_optim = options.pret_optim;
 options.pret_estimate.pret_model_check = options.pret_model_check;
 
 %% pret_bootstrap
+options.pret_bootstrap.trialmode = 'mean';
 options.pret_bootstrap.bootplotflag = true;
 options.pret_bootstrap.pret_estimate = options.pret_estimate;
 options.pret_bootstrap.pret_model_check = options.pret_model_check;

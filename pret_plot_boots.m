@@ -65,24 +65,24 @@ pret_model_check_options = options.pret_model_check;
 pret_model_check(model,pret_model_check_options)
 
 %boots vs model
-if any(boots.eventtimes ~= model.eventtimes) || any(boots.window ~= model.window) || boots.samplerate ~= model.samplerate || length(boots.boxtimes) ~= length(model.boxtimes)
+if any(boots.window ~= model.window) || boots.samplerate ~= model.samplerate || size(boots.boxtimes{1},2) ~= size(model.boxtimes,2)
     warning('Information in "boots" does not seem to match information in "model", check inputs\n')
 end
 
-for bx = 1:length(boots.boxtimes)
-    if any(boots.boxtimes{bx} ~= model.boxtimes{bx})
-        warning('Information in "boots" does not seem to match information in "model", check inputs\n')
-    end
-end
+% for bx = 1:length(boots.boxtimes)
+%     if any(boots.boxtimes{bx} ~= model.boxtimes{bx})
+%         warning('Information in "boots" does not seem to match information in "model", check inputs\n')
+%     end
+% end
 
 fhs = gobjects(0);
 
-if length(model.eventtimes) ~= length(model.eventlabels)
+if size(model.eventtimes,2) ~= size(model.eventlabels,2)
     fprintf('Number of event labels not equal to number of events.\nUsing generic labels instead\n')
     model.eventtimes = num2cell(1:length(model.eventtimes));
 end
 
-if length(model.boxtimes) ~= length(model.boxlabels)
+if size(model.boxtimes,2) ~= size(model.boxlabels,2)
     fprintf('Number of box labels not equal to number of boxes.\nUsing generic labels instead\n')
     model.boxtimes = num2cell(1:length(model.boxtimes));
 end
@@ -93,12 +93,12 @@ if model.ampflag
     fhs = [fhs figure];
     set(gcf,'Position',[100 100 560 420])
     hold on
-    xlim([0 length(boots.eventtimes)+1])
-    for ev = 1:length(boots.eventtimes)
+    xlim([0 size(boots.eventtimes{1},2)+1])
+    for ev = 1:size(boots.eventtimes{1},2)
         boxwhisker(boots.ampvals(:,ev),ev)
     end
     set(gca,'FontSize',12)
-    set(gca,'XTick',1:length(boots.eventtimes))
+    set(gca,'XTick',1:size(boots.eventtimes{1},2))
     set(gca,'XTickLabel',model.eventlabels)
     set(gca,'XTickLabelRotation',45)
     xlabel('Event','FontSize',16)
@@ -113,12 +113,12 @@ if model.latflag
     fhs = [fhs figure];
     set(gcf,'Position',[200 100 560 420])
     hold on
-    xlim([0 length(boots.eventtimes)+1])
-    for ev = 1:length(boots.eventtimes)
+    xlim([0 size(boots.eventtimes{1},2)+1])
+    for ev = 1:size(boots.eventtimes{1},2)
         boxwhisker(boots.latvals(:,ev),ev)
     end
     set(gca,'FontSize',12)
-    set(gca,'XTick',1:length(boots.eventtimes))
+    set(gca,'XTick',1:size(boots.eventtimes{1},2))
     set(gca,'XTickLabel',model.eventlabels)
     set(gca,'XTickLabelRotation',45)
     xlabel('Event','FontSize',16)
@@ -132,12 +132,12 @@ if model.boxampflag
     fhs = [fhs figure];
     set(gcf,'Position',[300 100 560 420])
     hold on
-    xlim([0 length(boots.boxtimes)+1])
-    for bx = 1:length(boots.boxtimes)
+    xlim([0 size(boots.boxtimes{1},2)+1])
+    for bx = 1:size(boots.boxtimes{1},2)
         boxwhisker(boots.boxampvals(:,bx),bx)
     end
     set(gca,'FontSize',12)
-    set(gca,'XTick',1:length(boots.boxtimes))
+    set(gca,'XTick',1:size(boots.boxtimes{1},2))
     set(gca,'XTickLabel',model.boxlabels)
     set(gca,'XTickLabelRotation',45)
     xlabel('Event','FontSize',16)

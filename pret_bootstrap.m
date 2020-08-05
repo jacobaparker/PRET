@@ -75,6 +75,11 @@ function [boots, bootestims] = pret_bootstrap(data,samplerate,trialwindow,model,
 %           or pret_cost in the place of the "model" input*
 % 
 %   Options
+%
+%       trialmode = 'mean' to fit the bootstrapped trial means or 'single' 
+%       to fit the bootstrapped single trials simultaneously (default = 'mean')
+%       In either case, bootstrapping will be performed on the full set of
+%       trials in the 'data' input.
 % 
 %       bootplotflag (true/false) = plot summary figures with the
 %       distribution of each parameter's bootstrap estimations.
@@ -112,6 +117,7 @@ if nargin < 7
 end
 
 %OPTIONS
+trialmode = options.trialmode;
 bootplotflag = options.bootplotflag;
 pret_estimate_options = options.pret_estimate;
 pret_model_check_options = options.pret_model_check;
@@ -143,20 +149,49 @@ datalb = find(model.window(1) == time);
 dataub = find(model.window(2) == time);
 data = data(:,datalb:dataub);
 
-%create bootstrap means of trials in data
+%create a model structure for each optimization to be completed (enables
+%use of parfor loop when trialmode = 'single')
+bootmodel(nboots) = model;
+
+%bootstrap trials
 rng(0)
-means = bootstrp(nboots,@nanmean,data);
+switch trialmode
+    case 'mean'
+        means = bootstrp(nboots,@nanmean,data);
+        bootdata = mat2cell(means,ones(nboots,1),size(data,2));
+        for nb = 1:nboots
+            bootmodel(nb) = model;
+        end
+    case 'single'
+        [samples,inds] = bootstrp(nboots,@(x)[x],data);
+        samples = reshape(samples',size(data,1),size(data,2),nboots);
+        bootdata = mat2cell(samples,size(data,1),size(data,2),ones(nboots,1));
+        for nb = 1:nboots
+            bootmodel(nb) = model;
+            bootmodel(nb).eventtimes = model.eventtimes(inds(:,nb),:);
+            for bt = 1:size(model.boxtimes,2)
+                bootmodel(nb).boxtimes{bt} = model.boxtimes{bt}(inds(:,nb),:);
+            end
+        end
+    otherwise
+        error('"trialmode" not recognized')
+end
 
 bootestims = struct('eventtimes',model.eventtimes,'boxtimes',model.boxtimes,'samplerate',model.samplerate,'window',model.window,'ampvals',[],'boxampvals',[],'latvals',[],'tmaxval',[],'yintval',[],'slopeval',[],'numparams',[],'cost',[],'R2',[],'BICrel',[]);
 modelsamplerate = model.samplerate;
 modelwindow = model.window;
+
+% IF SINGLE TRIALS, MODEL.EVENTTIMES/BOXTIMES NEED TO BE INDEXED TO BE BOOTSTRAPPED
+% TRIALS
 
 %estimate model parameters for each bootstrap mean
 fprintf('\nBeginning bootstrapping, %d iterations to be completed\n',nboots)
 if wnum == 1
     for nb = 1:nboots
         fprintf('\nStart iteration %d\n',nb)
-        bootestims(nb) = pret_estimate(means(nb,:),modelsamplerate,modelwindow,model,1,pret_estimate_options);
+        bootestims(nb) = pret_estimate(bootdata{nb},modelsamplerate,modelwindow,bootmodel(nb),1,pret_estimate_options);
+        bootestims(nb).eventtimes = bootmodel(nb).eventtimes;
+        bootestims(nb).boxtimes = bootmodel(nb).boxtimes;
         fprintf('\nEnd iteration %d\n',nb)
     end
 else
@@ -166,15 +201,25 @@ else
     end
     parfor nb = 1:nboots
         fprintf('\nStart iteration %d\n',nb)
-        bootestims(nb) = pret_estimate(means(nb,:),modelsamplerate,modelwindow,model,1,pret_estimate_options);
+        bootestims(nb) = pret_estimate(bootdata{nb},modelsamplerate,modelwindow,bootmodel(nb),1,pret_estimate_options);
+        bootestims(nb).eventtimes = bootmodel(nb).eventtimes;
+        bootestims(nb).boxtimes = bootmodel(nb).boxtimes;
         fprintf('\nEnd iteration %d\n',nb)
     end
 end
 fprintf('Boostrapping completed!\n')
 
-boots = struct('eventtimes',model.eventtimes,'boxtimes',{model.boxtimes},'samplerate',model.samplerate,'window',model.window,'ampvals',nan(nboots,length(model.eventtimes)),'boxampvals',nan(nboots,length(model.boxtimes)),'latvals',nan(nboots,length(model.eventtimes)),'tmaxvals',nan(nboots,1),'yintvals',nan(nboots,1),'slopevals',nan(nboots,1),'costs',nan(nboots,1),'R2',nan(nboots,1));
+boots = struct('eventtimes',{cell(nboots,1)},'boxtimes',{cell(nboots,1)}, ...
+    'samplerate',model.samplerate,'window',model.window, ... 
+    'ampvals',nan(nboots,size(model.eventtimes,2)), ... 
+    'boxampvals',nan(nboots,size(model.boxtimes,2)), ...
+    'latvals',nan(nboots,size(model.eventtimes,2)),'tmaxvals',nan(nboots,1), ...
+    'yintvals',nan(nboots,1),'slopevals',nan(nboots,1),'costs',nan(nboots,1), ...
+    'R2',nan(nboots,1));
 
 for nb = 1:nboots
+    boots.eventtimes{nb} = bootestims(nb).eventtimes;
+    boots.boxtimes{nb} = bootestims(nb).boxtimes;
     boots.ampvals(nb,:) = bootestims(nb).ampvals;
     boots.boxampvals(nb,:) = bootestims(nb).boxampvals;
     boots.latvals(nb,:) = bootestims(nb).latvals;

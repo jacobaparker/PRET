@@ -234,8 +234,8 @@ options = pret_estimate_sj();
 options.pret_estimate.optimnum = 3;
 % if you want to try fiting the parameters using single trials instead of the mean,
 % use these lines (you'll want to turn off the optimization plots for this):
-%   options.trialmode = 'single';
-%   options.pret_estimate.pret_optim.optimplotflag = false;
+% options.trialmode = 'single';
+% options.pret_estimate.pret_optim.optimplotflag = false;
 wnum = 1;
 
 sj = pret_estimate_sj(sj,model,wnum,options);
@@ -272,6 +272,10 @@ legend([gobj1 gobj2],{'data' 'model'});
 % estimations will appear automatically
 options = pret_bootstrap_sj();
 options.pret_bootstrap.pret_estimate.optimnum = 3;
+% if you want to try fiting the parameters using single trials instead of the mean,
+% use these lines (you'll want to turn off the optimization plots for this):
+% options.trialmode = 'single';
+% options.pret_bootstrap.pret_estimate.pret_optim.optimplotflag
 wnum = 1;
 nboots = 5;
 

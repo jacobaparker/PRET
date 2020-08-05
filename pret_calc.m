@@ -92,7 +92,7 @@ end
 for bx = 1:size(X2,1)
     
     h = pupilrf(time,n,model.tmaxval,model.boxtimes{bx}(1));
-    temp = conv(h,(ones(1,(model.boxtimes{bx}(2)-model.boxtimes{bx}(1))*sfact+1)));
+    temp = conv(h,(ones(1,round((model.boxtimes{bx}(2)-model.boxtimes{bx}(1))*sfact+1))));
     temp = (temp/max(temp)) .* model.boxampvals(bx);
     X2(bx,:) = temp(1:length(time));
     
@@ -131,7 +131,7 @@ Ycalc = sum(X,1) + model.slopeval*time + model.yintval;
         %box amplitude
         if ~isempty(model.boxtimes)
             for ii = 1:length(model.boxtimes)
-                if length(model.boxtimes{ii}) ~= 2
+                if size(model.boxtimes{ii},2) ~= 2
                     error('All cells in boxtimes must be a 2 element vector')
                 end
             end
